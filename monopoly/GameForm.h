@@ -100,6 +100,11 @@ namespace monopoly {
 	private: System::Windows::Forms::PictureBox^ fullBalance;
 	public: System::Windows::Forms::TextBox^ cash;
 	public: System::Windows::Forms::TextBox^ streetMoney;
+	private: System::Windows::Forms::PictureBox^ pictureBox1;
+	public:
+	private: System::Windows::Forms::Timer^ timer2;
+
+	public:
 	private:
 
 	private:
@@ -173,6 +178,8 @@ namespace monopoly {
 			this->fullBalance = (gcnew System::Windows::Forms::PictureBox());
 			this->cash = (gcnew System::Windows::Forms::TextBox());
 			this->streetMoney = (gcnew System::Windows::Forms::TextBox());
+			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
+			this->timer2 = (gcnew System::Windows::Forms::Timer(this->components));
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->backToMenu))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_11))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_12))->BeginInit();
@@ -220,6 +227,7 @@ namespace monopoly {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dice_2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->showFullBalance))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->fullBalance))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// backToMenu
@@ -771,6 +779,8 @@ namespace monopoly {
 			this->cash->Text = L"0.000$";
 			this->cash->Visible = false;
 			this->cash->WordWrap = false;
+			this->cash->MouseEnter += gcnew System::EventHandler(this, &GameForm::UnFocus);
+			this->cash->MouseLeave += gcnew System::EventHandler(this, &GameForm::UnFocus);
 			// 
 			// streetMoney
 			// 
@@ -793,6 +803,21 @@ namespace monopoly {
 			this->streetMoney->Text = L"0.000$";
 			this->streetMoney->Visible = false;
 			this->streetMoney->WordWrap = false;
+			this->streetMoney->MouseEnter += gcnew System::EventHandler(this, &GameForm::UnFocus);
+			this->streetMoney->MouseLeave += gcnew System::EventHandler(this, &GameForm::UnFocus);
+			// 
+			// pictureBox1
+			// 
+			this->pictureBox1->Location = System::Drawing::Point(1419, 907);
+			this->pictureBox1->Name = L"pictureBox1";
+			this->pictureBox1->Size = System::Drawing::Size(49, 50);
+			this->pictureBox1->TabIndex = 91;
+			this->pictureBox1->TabStop = false;
+			// 
+			// timer2
+			// 
+			this->timer2->Interval = 10;
+			this->timer2->Tick += gcnew System::EventHandler(this, &GameForm::timer2_Tick);
 			// 
 			// GameForm
 			// 
@@ -803,6 +828,7 @@ namespace monopoly {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
 			this->ClientSize = System::Drawing::Size(1904, 1041);
+			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->streetMoney);
 			this->Controls->Add(this->cash);
 			this->Controls->Add(this->fullBalance);
@@ -907,6 +933,7 @@ namespace monopoly {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dice_2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->showFullBalance))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->fullBalance))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -925,10 +952,16 @@ namespace monopoly {
 	private: System::Void rollDice_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
 	private: System::Void rollDice_MouseEnter(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void rollDice_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+
 	private: System::Void GameForm_Load(System::Object^ sender, System::EventArgs^ e);
+
 	private: System::Void UnFocus(System::Object^ sender, System::EventArgs^ e);
+
 	private: System::Void showFullBalance_Click(System::Object^ sender, System::EventArgs^ e);
+
 	private: System::Void timer1_Tick(System::Object^ sender, System::EventArgs^ e);
+
+	private: System::Void timer2_Tick(System::Object^ sender, System::EventArgs^ e);
 };
 }
 
@@ -937,6 +970,13 @@ public:
 	static std::string userName;
 	static int cash;
 	static int streetMoney;
+};
+
+class Cell
+{
+public:
+	int x;
+	int y;
 };
 
 

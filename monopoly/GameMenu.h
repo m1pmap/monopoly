@@ -109,6 +109,10 @@ namespace monopoly {
 			this->startGame->TabIndex = 1;
 			this->startGame->TabStop = false;
 			this->startGame->Click += gcnew System::EventHandler(this, &GameMenu::StartGame_Click);
+			this->startGame->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameMenu::startGame_MouseDown);
+			this->startGame->MouseEnter += gcnew System::EventHandler(this, &GameMenu::startGame_MouseEnter);
+			this->startGame->MouseLeave += gcnew System::EventHandler(this, &GameMenu::startGame_MouseLeave);
+			this->startGame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameMenu::startGame_MouseUp);
 			// 
 			// closeGame
 			// 
@@ -121,6 +125,10 @@ namespace monopoly {
 			this->closeGame->TabIndex = 2;
 			this->closeGame->TabStop = false;
 			this->closeGame->Click += gcnew System::EventHandler(this, &GameMenu::closeGame_Click);
+			this->closeGame->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameMenu::closeGame_MouseDown);
+			this->closeGame->MouseEnter += gcnew System::EventHandler(this, &GameMenu::closeGame_MouseEnter);
+			this->closeGame->MouseLeave += gcnew System::EventHandler(this, &GameMenu::closeGame_MouseLeave);
+			this->closeGame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameMenu::closeGame_MouseUp);
 			// 
 			// card
 			// 
@@ -274,8 +282,16 @@ namespace monopoly {
 		}
 #pragma endregion
 private: System::Void StartGame_Click(System::Object^ sender, System::EventArgs^ e);
+private: System::Void startGame_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void startGame_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void startGame_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+private: System::Void startGame_MouseLeave(System::Object^ sender, System::EventArgs^ e);
 	
 private: System::Void closeGame_Click(System::Object^ sender, System::EventArgs^ e);
+private: System::Void closeGame_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void closeGame_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void closeGame_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+private: System::Void closeGame_MouseLeave(System::Object^ sender, System::EventArgs^ e);
 	
 private: System::Void arrowRight_Click(System::Object^ sender, System::EventArgs^ e);
 	

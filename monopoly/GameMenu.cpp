@@ -25,10 +25,42 @@ System::Void GameMenu::StartGame_Click(System::Object^ sender, System::EventArgs
 	f->Show();
 	this->Hide();
 }
+System::Void GameMenu::startGame_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	startGame->Image = Image::FromFile(Application::StartupPath + "\\assets\\buttonStartGame_onMouseDown.png");
+}
+System::Void GameMenu::startGame_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	startGame->Image = Image::FromFile(Application::StartupPath + "\\assets\\buttonStartGame_onMouseUp.png");
+}
+System::Void GameMenu::startGame_MouseEnter(System::Object^ sender, System::EventArgs^ e)
+{
+	startGame->Image = Image::FromFile(Application::StartupPath + "\\assets\\buttonStartGame_onMouseEnter.png");
+}
+System::Void GameMenu::startGame_MouseLeave(System::Object^ sender, System::EventArgs^ e)
+{
+	startGame->Image = Image::FromFile(Application::StartupPath + "\\assets\\buttonStartGame_onMouseUp.png");
+}
 
 System::Void GameMenu::closeGame_Click(System::Object^ sender, System::EventArgs^ e)
 {
 	this->Close();
+}
+System::Void GameMenu::closeGame_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	closeGame->Image = Image::FromFile(Application::StartupPath + "\\assets\\buttonCloseGame_onMouseDown.png");
+}
+System::Void GameMenu::closeGame_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	closeGame->Image = Image::FromFile(Application::StartupPath + "\\assets\\buttonCloseGame_onMouseUp.png");
+}
+System::Void GameMenu::closeGame_MouseEnter(System::Object^ sender, System::EventArgs^ e)
+{
+	closeGame->Image = Image::FromFile(Application::StartupPath + "\\assets\\buttonCloseGame_onMouseEnter.png");
+}
+System::Void GameMenu::closeGame_MouseLeave(System::Object^ sender, System::EventArgs^ e)
+{
+	closeGame->Image = Image::FromFile(Application::StartupPath + "\\assets\\buttonCloseGame_onMouseUp.png");
 }
 
 System::Void GameMenu::arrowRight_Click(System::Object^ sender, System::EventArgs^ e)
@@ -44,7 +76,7 @@ System::Void GameMenu::timer1_Tick(System::Object^ sender, System::EventArgs^ e)
 	if (!arrowBool) //проверка булевой переменной(true - анимация влево, false - анимация вправо) 
 	{
 		if (card->Left > -1900)	//таймер и анимация действует и перемещается вправо до момента пока координаты не достигнут установленного предела
-			card->Left -= 50;
+			card->Left -= 100;
 		else {	//если достигнут предел
 			timer1->Stop();	//остановка таймера
 			arrowLeft->Visible = true; //показ кнопки, возвращения на 1-ое меню
@@ -59,7 +91,7 @@ System::Void GameMenu::timer1_Tick(System::Object^ sender, System::EventArgs^ e)
 	}
 	else {
 		if (card->Left < 0)	//таймер и анимация действует и перемещается влево до момента пока координаты не достигнут установленного предела
-			card->Left += 50;
+			card->Left += 100;
 		else {	//если достигнут предел
 			timer1->Stop();	//остановка таймера
 			arrowRight->Visible = true;	//показ кнопки, возвращения на 2-ое меню

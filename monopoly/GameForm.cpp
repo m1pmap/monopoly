@@ -5,8 +5,9 @@
 #include <chrono>
 
 std::string Player::userName = "UserName";
-int Player::cash = 3;
-int Player::streetMoney = 1;
+int Player::cash = 3000;
+int Player::streetMoney = 75;
+Cell board[40];
 
 using namespace monopoly;
 
@@ -57,6 +58,8 @@ void change_picture(System::Windows::Forms::PictureBox^ pictureBox, System::Stri
 	pictureBox->Image = Image::FromFile(Application::StartupPath + "\\assets\\dices\\" + file_path);
 }
 
+int Pos = 0;
+
 System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^ e)
 {
 	rollDice->Image = Image::FromFile(Application::StartupPath + "\\assets\\rollTheDice_onRoll.png");
@@ -66,6 +69,8 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 	array<String^>^ images = gcnew array<String^>{ "dice_1.png", "dice_2.png", "dice_3.png", "dice_4.png", "dice_5.png", "dice_6.png"};
 	int sleepTime = 10;
+	int i1 = 0;
+	int i2 = 0;
 	for (int i = 0; i < 30; i++) {
 		sleepTime += 5;
 		int dice1_roll = rand() % 6 + 1;
@@ -75,8 +80,47 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 		dice_1->Refresh();
 		dice_2->Refresh();
 		System::Threading::Thread::Sleep(sleepTime);
+		i1 = dice1_roll;
+		i2 = dice2_roll;
+	}
+	timer2->Start();
+	Pos = (Pos + i1 + i2) % 40;
+	pictureBox1->Location = System::Drawing::Point(board[Pos - 1].x, board[Pos - 1].y);
+}
+
+System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ e)
+{
+	UserName->Text = gcnew System::String(Player::userName.c_str());
+
+	std::string buffString = std::to_string(Player::cash + Player::streetMoney) + "$";
+	AllMoney->Text = gcnew System::String(buffString.c_str());
+
+	buffString = std::to_string(Player::cash) + "$";
+	cash->Text = gcnew System::String(buffString.c_str());
+
+	buffString = std::to_string(Player::streetMoney) + "$";
+	streetMoney->Text = gcnew System::String(buffString.c_str());
+
+	array<PictureBox^>^ pictureBoxes = gcnew array<PictureBox^>(40) {
+		cell_1, cell_2, cell_3, cell_4, cell_5, cell_6, cell_7, cell_8, cell_9, cell_10, cell_11, cell_12, cell_13, cell_14, cell_15, cell_16, cell_17, cell_18, cell_19, cell_20,
+			cell_21, cell_22, cell_23, cell_24, cell_25, cell_26, cell_27, cell_28, cell_29, cell_30, cell_31, cell_32, cell_33, cell_34, cell_35, cell_36, cell_37, cell_38, cell_39, cell_40
+	};
+	for (int i = 0; i < 40; i++)
+	{
+		board[i].x = pictureBoxes[i]->Location.X + 12;
+		board[i].y = pictureBoxes[i]->Location.Y + 12;
 	}
 }
+
+System::Void GameForm::timer2_Tick(System::Object^ sender, System::EventArgs^ e)
+{
+	/*if (pictureBox1->Left > board[newPosition].x)
+		pictureBox1->Location = System::Drawing::Point(board[newPosition].x, board[newPosition].y);
+	else {
+		timer1->Stop();
+	}*/
+}
+
 
 System::Void GameForm::rollDice_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
 {
@@ -93,20 +137,6 @@ System::Void GameForm::rollDice_MouseEnter(System::Object^ sender, System::Event
 System::Void GameForm::rollDice_MouseLeave(System::Object^ sender, System::EventArgs^ e)
 {
 	rollDice->Image = Image::FromFile(Application::StartupPath + "\\assets\\rollTheDice_onMouseUp.png");
-}
-
-System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ e)
-{
-	UserName->Text = gcnew System::String(Player::userName.c_str());
-
-	std::string buffString = std::to_string(Player::cash + Player::streetMoney) + "$";
-	AllMoney->Text = gcnew System::String(buffString.c_str());
-
-	buffString = std::to_string(Player::cash) + "$";
-	cash->Text = gcnew System::String(buffString.c_str());
-
-	buffString = std::to_string(Player::streetMoney) + "$";
-	streetMoney->Text = gcnew System::String(buffString.c_str());
 }
 
 System::Void GameForm::UnFocus(System::Object^ sender, System::EventArgs^ e)
