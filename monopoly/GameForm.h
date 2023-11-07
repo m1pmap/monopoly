@@ -38,12 +38,14 @@ namespace monopoly {
 				delete components;
 			}
 		}
+	private: System::ComponentModel::IContainer^ components;
+	protected:
 
 	private:
 		/// <summary>
 		/// Обязательная переменная конструктора.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 	private: System::Windows::Forms::PictureBox^ backToMenu;
 	private: System::Windows::Forms::PictureBox^ cell_11;
 	private: System::Windows::Forms::PictureBox^ cell_12;
@@ -91,6 +93,19 @@ namespace monopoly {
 
 	private: System::Windows::Forms::PictureBox^ dice_2;
 	public: System::Windows::Forms::TextBox^ UserName;
+	public: System::Windows::Forms::TextBox^ AllMoney;
+	private: System::Windows::Forms::PictureBox^ showFullBalance;
+	public:
+	private: System::Windows::Forms::Timer^ timer1;
+	private: System::Windows::Forms::PictureBox^ fullBalance;
+	public: System::Windows::Forms::TextBox^ cash;
+	public: System::Windows::Forms::TextBox^ streetMoney;
+	private:
+
+	private:
+
+
+
 	private:
 
 	private:
@@ -104,6 +119,7 @@ namespace monopoly {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(GameForm::typeid));
 			this->backToMenu = (gcnew System::Windows::Forms::PictureBox());
 			this->cell_11 = (gcnew System::Windows::Forms::PictureBox());
@@ -151,6 +167,12 @@ namespace monopoly {
 			this->dice_1 = (gcnew System::Windows::Forms::PictureBox());
 			this->dice_2 = (gcnew System::Windows::Forms::PictureBox());
 			this->UserName = (gcnew System::Windows::Forms::TextBox());
+			this->AllMoney = (gcnew System::Windows::Forms::TextBox());
+			this->showFullBalance = (gcnew System::Windows::Forms::PictureBox());
+			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->fullBalance = (gcnew System::Windows::Forms::PictureBox());
+			this->cash = (gcnew System::Windows::Forms::TextBox());
+			this->streetMoney = (gcnew System::Windows::Forms::TextBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->backToMenu))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_11))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_12))->BeginInit();
@@ -196,6 +218,8 @@ namespace monopoly {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rollDice))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dice_1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dice_2))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->showFullBalance))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->fullBalance))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// backToMenu
@@ -662,31 +686,128 @@ namespace monopoly {
 			this->UserName->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(231)), static_cast<System::Int32>(static_cast<System::Byte>(159)),
 				static_cast<System::Int32>(static_cast<System::Byte>(115)));
 			this->UserName->BorderStyle = System::Windows::Forms::BorderStyle::None;
-			this->UserName->Font = (gcnew System::Drawing::Font(L"Impact", 58, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->UserName->Font = (gcnew System::Drawing::Font(L"Impact", 45, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
 			this->UserName->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(50)), static_cast<System::Int32>(static_cast<System::Byte>(21)),
 				static_cast<System::Int32>(static_cast<System::Byte>(54)));
 			this->UserName->ImeMode = System::Windows::Forms::ImeMode::NoControl;
-			this->UserName->Location = System::Drawing::Point(140, 7);
+			this->UserName->Location = System::Drawing::Point(145, 15);
 			this->UserName->MaxLength = 7;
 			this->UserName->Name = L"UserName";
 			this->UserName->ReadOnly = true;
 			this->UserName->ShortcutsEnabled = false;
-			this->UserName->Size = System::Drawing::Size(369, 95);
+			this->UserName->Size = System::Drawing::Size(369, 74);
 			this->UserName->TabIndex = 85;
 			this->UserName->TabStop = false;
 			this->UserName->Text = L"YourName";
 			this->UserName->WordWrap = false;
 			this->UserName->MouseLeave += gcnew System::EventHandler(this, &GameForm::UnFocus);
 			// 
+			// AllMoney
+			// 
+			this->AllMoney->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->AllMoney->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->AllMoney->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 45, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->AllMoney->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(48)), static_cast<System::Int32>(static_cast<System::Byte>(79)),
+				static_cast<System::Int32>(static_cast<System::Byte>(74)));
+			this->AllMoney->ImeMode = System::Windows::Forms::ImeMode::NoControl;
+			this->AllMoney->Location = System::Drawing::Point(100, 186);
+			this->AllMoney->MaxLength = 7;
+			this->AllMoney->Name = L"AllMoney";
+			this->AllMoney->ReadOnly = true;
+			this->AllMoney->ShortcutsEnabled = false;
+			this->AllMoney->Size = System::Drawing::Size(276, 84);
+			this->AllMoney->TabIndex = 86;
+			this->AllMoney->TabStop = false;
+			this->AllMoney->Text = L"0.000$";
+			this->AllMoney->WordWrap = false;
+			// 
+			// showFullBalance
+			// 
+			this->showFullBalance->BackColor = System::Drawing::Color::Transparent;
+			this->showFullBalance->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"showFullBalance.Image")));
+			this->showFullBalance->Location = System::Drawing::Point(409, 203);
+			this->showFullBalance->Name = L"showFullBalance";
+			this->showFullBalance->Size = System::Drawing::Size(37, 57);
+			this->showFullBalance->TabIndex = 87;
+			this->showFullBalance->TabStop = false;
+			this->showFullBalance->Click += gcnew System::EventHandler(this, &GameForm::showFullBalance_Click);
+			// 
+			// timer1
+			// 
+			this->timer1->Interval = 9;
+			this->timer1->Tick += gcnew System::EventHandler(this, &GameForm::timer1_Tick);
+			// 
+			// fullBalance
+			// 
+			this->fullBalance->BackColor = System::Drawing::Color::Transparent;
+			this->fullBalance->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"fullBalance.Image")));
+			this->fullBalance->Location = System::Drawing::Point(-400, 301);
+			this->fullBalance->Name = L"fullBalance";
+			this->fullBalance->Size = System::Drawing::Size(401, 134);
+			this->fullBalance->TabIndex = 88;
+			this->fullBalance->TabStop = false;
+			// 
+			// cash
+			// 
+			this->cash->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->cash->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->cash->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 25, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->cash->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(48)), static_cast<System::Int32>(static_cast<System::Byte>(79)),
+				static_cast<System::Int32>(static_cast<System::Byte>(74)));
+			this->cash->ImeMode = System::Windows::Forms::ImeMode::NoControl;
+			this->cash->Location = System::Drawing::Point(316, 322);
+			this->cash->MaxLength = 7;
+			this->cash->Name = L"cash";
+			this->cash->ReadOnly = true;
+			this->cash->ShortcutsEnabled = false;
+			this->cash->Size = System::Drawing::Size(133, 47);
+			this->cash->TabIndex = 89;
+			this->cash->TabStop = false;
+			this->cash->Text = L"0.000$";
+			this->cash->Visible = false;
+			this->cash->WordWrap = false;
+			// 
+			// streetMoney
+			// 
+			this->streetMoney->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->streetMoney->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->streetMoney->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 25, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->streetMoney->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(48)), static_cast<System::Int32>(static_cast<System::Byte>(79)),
+				static_cast<System::Int32>(static_cast<System::Byte>(74)));
+			this->streetMoney->ImeMode = System::Windows::Forms::ImeMode::NoControl;
+			this->streetMoney->Location = System::Drawing::Point(280, 367);
+			this->streetMoney->MaxLength = 7;
+			this->streetMoney->Name = L"streetMoney";
+			this->streetMoney->ReadOnly = true;
+			this->streetMoney->ShortcutsEnabled = false;
+			this->streetMoney->Size = System::Drawing::Size(133, 47);
+			this->streetMoney->TabIndex = 90;
+			this->streetMoney->TabStop = false;
+			this->streetMoney->Text = L"0.000$";
+			this->streetMoney->Visible = false;
+			this->streetMoney->WordWrap = false;
+			// 
 			// GameForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackColor = System::Drawing::Color::White;
+			this->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(231)), static_cast<System::Int32>(static_cast<System::Byte>(159)),
+				static_cast<System::Int32>(static_cast<System::Byte>(115)));
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
 			this->ClientSize = System::Drawing::Size(1904, 1041);
+			this->Controls->Add(this->streetMoney);
+			this->Controls->Add(this->cash);
+			this->Controls->Add(this->fullBalance);
+			this->Controls->Add(this->showFullBalance);
+			this->Controls->Add(this->AllMoney);
 			this->Controls->Add(this->UserName);
 			this->Controls->Add(this->dice_2);
 			this->Controls->Add(this->dice_1);
@@ -784,6 +905,8 @@ namespace monopoly {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rollDice))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dice_1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dice_2))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->showFullBalance))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->fullBalance))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -804,12 +927,16 @@ namespace monopoly {
 	private: System::Void rollDice_MouseLeave(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void GameForm_Load(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void UnFocus(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void showFullBalance_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void timer1_Tick(System::Object^ sender, System::EventArgs^ e);
 };
 }
 
 class Player {
 public:
 	static std::string userName;
+	static int cash;
+	static int streetMoney;
 };
 
 

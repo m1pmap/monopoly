@@ -5,6 +5,8 @@
 #include <chrono>
 
 std::string Player::userName = "UserName";
+int Player::cash = 3;
+int Player::streetMoney = 1;
 
 using namespace monopoly;
 
@@ -95,11 +97,61 @@ System::Void GameForm::rollDice_MouseLeave(System::Object^ sender, System::Event
 
 System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ e)
 {
-	UserName->Text = gcnew String(msclr::interop::marshal_as<System::String^>(Player::userName));
+	UserName->Text = gcnew System::String(Player::userName.c_str());
+
+	std::string buffString = std::to_string(Player::cash + Player::streetMoney) + "$";
+	AllMoney->Text = gcnew System::String(buffString.c_str());
+
+	buffString = std::to_string(Player::cash) + "$";
+	cash->Text = gcnew System::String(buffString.c_str());
+
+	buffString = std::to_string(Player::streetMoney) + "$";
+	streetMoney->Text = gcnew System::String(buffString.c_str());
 }
 
 System::Void GameForm::UnFocus(System::Object^ sender, System::EventArgs^ e)
 {
 	backToMenu->Focus();
+}
+
+bool fullBalanceBool = false;
+
+System::Void GameForm::showFullBalance_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	if (fullBalanceBool)
+	{
+		timer1->Start();
+		fullBalanceBool = false;
+		cash->Visible = false;
+		streetMoney->Visible = false;
+	}
+	else
+	{
+		timer1->Start();
+		fullBalanceBool = true;
+	}
+}
+
+System::Void GameForm::timer1_Tick(System::Object^ sender, System::EventArgs^ e)
+{
+	if (!fullBalanceBool)
+	{
+		if (fullBalance->Left > -400)
+			fullBalance->Left -= 52;
+		else {
+			timer1->Stop();
+			showFullBalance->Image = Image::FromFile(Application::StartupPath + "\\assets\\showFullBalance.png");
+		}
+	}
+	else {
+		if (fullBalance->Left < 68)
+			fullBalance->Left += 52;
+		else {
+			timer1->Stop();
+			showFullBalance->Image = Image::FromFile(Application::StartupPath + "\\assets\\hideFullBalance.png");
+			cash->Visible = true;
+			streetMoney->Visible = true;
+		}
+	}
 }
 
