@@ -1,5 +1,7 @@
 #pragma once
 #include "GameMenu.h"
+#include <string>
+#include <msclr/marshal_cppstd.h>
 
 namespace monopoly {
 
@@ -26,7 +28,7 @@ namespace monopoly {
 		}
 
 	protected:
-		/// <summary>
+		/// <summary> 
 		/// Освободить все используемые ресурсы.
 		/// </summary>
 		~GameForm()
@@ -88,6 +90,11 @@ namespace monopoly {
 	private: System::Windows::Forms::PictureBox^ dice_1;
 
 	private: System::Windows::Forms::PictureBox^ dice_2;
+	public: System::Windows::Forms::TextBox^ UserName;
+	private:
+
+	private:
+
 
 		   GameMenu^ parentForm;
 #pragma region Windows Form Designer generated code
@@ -143,6 +150,7 @@ namespace monopoly {
 			this->rollDice = (gcnew System::Windows::Forms::PictureBox());
 			this->dice_1 = (gcnew System::Windows::Forms::PictureBox());
 			this->dice_2 = (gcnew System::Windows::Forms::PictureBox());
+			this->UserName = (gcnew System::Windows::Forms::TextBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->backToMenu))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_11))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_12))->BeginInit();
@@ -649,6 +657,28 @@ namespace monopoly {
 			this->dice_2->TabIndex = 84;
 			this->dice_2->TabStop = false;
 			// 
+			// UserName
+			// 
+			this->UserName->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(231)), static_cast<System::Int32>(static_cast<System::Byte>(159)),
+				static_cast<System::Int32>(static_cast<System::Byte>(115)));
+			this->UserName->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->UserName->Font = (gcnew System::Drawing::Font(L"Impact", 58, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->UserName->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(50)), static_cast<System::Int32>(static_cast<System::Byte>(21)),
+				static_cast<System::Int32>(static_cast<System::Byte>(54)));
+			this->UserName->ImeMode = System::Windows::Forms::ImeMode::NoControl;
+			this->UserName->Location = System::Drawing::Point(140, 7);
+			this->UserName->MaxLength = 7;
+			this->UserName->Name = L"UserName";
+			this->UserName->ReadOnly = true;
+			this->UserName->ShortcutsEnabled = false;
+			this->UserName->Size = System::Drawing::Size(369, 95);
+			this->UserName->TabIndex = 85;
+			this->UserName->TabStop = false;
+			this->UserName->Text = L"YourName";
+			this->UserName->WordWrap = false;
+			this->UserName->MouseLeave += gcnew System::EventHandler(this, &GameForm::UnFocus);
+			// 
 			// GameForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -657,6 +687,7 @@ namespace monopoly {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
 			this->ClientSize = System::Drawing::Size(1904, 1041);
+			this->Controls->Add(this->UserName);
 			this->Controls->Add(this->dice_2);
 			this->Controls->Add(this->dice_1);
 			this->Controls->Add(this->rollDice);
@@ -707,6 +738,7 @@ namespace monopoly {
 			this->Name = L"GameForm";
 			this->Text = L"GameForm";
 			this->WindowState = System::Windows::Forms::FormWindowState::Maximized;
+			this->Load += gcnew System::EventHandler(this, &GameForm::GameForm_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->backToMenu))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_11))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_12))->EndInit();
@@ -753,6 +785,7 @@ namespace monopoly {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dice_1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dice_2))->EndInit();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -769,5 +802,14 @@ namespace monopoly {
 	private: System::Void rollDice_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
 	private: System::Void rollDice_MouseEnter(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void rollDice_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void GameForm_Load(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void UnFocus(System::Object^ sender, System::EventArgs^ e);
 };
 }
+
+class Player {
+public:
+	static std::string userName;
+};
+
+

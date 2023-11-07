@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 
 namespace monopoly {
 
@@ -46,7 +48,10 @@ namespace monopoly {
 	private: System::Windows::Forms::PictureBox^ arrowPrev;
 	private: System::Windows::Forms::PictureBox^ arrowNext;
 	private: System::Windows::Forms::PictureBox^ changeName;
-	private: System::Windows::Forms::TextBox^ UserName;
+	public: System::Windows::Forms::TextBox^ UserName;
+	private:
+
+	private: System::ComponentModel::BackgroundWorker^ backgroundWorker1;
 	private: System::ComponentModel::IContainer^ components;
 	public:
 	protected:
@@ -55,7 +60,7 @@ namespace monopoly {
 
 
 
-	private:
+	public:
 		/// <summary>
 		/// Обязательная переменная конструктора.
 		/// </summary>
@@ -81,6 +86,7 @@ namespace monopoly {
 			this->arrowNext = (gcnew System::Windows::Forms::PictureBox());
 			this->changeName = (gcnew System::Windows::Forms::PictureBox());
 			this->UserName = (gcnew System::Windows::Forms::TextBox());
+			this->backgroundWorker1 = (gcnew System::ComponentModel::BackgroundWorker());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->startGame))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->closeGame))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->card))->BeginInit();
@@ -224,6 +230,7 @@ namespace monopoly {
 			this->UserName->Text = L"YourName";
 			this->UserName->Visible = false;
 			this->UserName->WordWrap = false;
+			this->UserName->MouseEnter += gcnew System::EventHandler(this, &GameMenu::Unfocus);
 			this->UserName->MouseLeave += gcnew System::EventHandler(this, &GameMenu::Unfocus);
 			// 
 			// GameMenu
@@ -285,3 +292,8 @@ private: System::Void Unfocus(System::Object^ sender, System::EventArgs^ e);
 private: System::Void changeName_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }
+class User
+{
+public:
+	static std::string userName;
+};

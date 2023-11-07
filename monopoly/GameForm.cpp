@@ -1,7 +1,10 @@
 #include "GameForm.h"
+#include "GameMenu.h"
 #include <string>
 #include <msclr/marshal_cppstd.h>
 #include <chrono>
+
+std::string Player::userName = "UserName";
 
 using namespace monopoly;
 
@@ -89,3 +92,14 @@ System::Void GameForm::rollDice_MouseLeave(System::Object^ sender, System::Event
 {
 	rollDice->Image = Image::FromFile(Application::StartupPath + "\\assets\\rollTheDice_onMouseUp.png");
 }
+
+System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ e)
+{
+	UserName->Text = gcnew String(msclr::interop::marshal_as<System::String^>(Player::userName));
+}
+
+System::Void GameForm::UnFocus(System::Object^ sender, System::EventArgs^ e)
+{
+	backToMenu->Focus();
+}
+
