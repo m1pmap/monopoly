@@ -156,7 +156,7 @@ System::Void GameMenu::changeName_Click(System::Object^ sender, System::EventArg
 	{
 		UserName->ReadOnly = true;	//запрет изменять имя игрока
 		changeName->Image = Image::FromFile(Application::StartupPath + "\\assets\\changeName_onMouseUp.png");	//смена картинки на "изменить"
-		Player::userName = msclr::interop::marshal_as<std::string>(UserName->Text);
+		users[0].userName = msclr::interop::marshal_as<std::string>(UserName->Text);
 		changeNameBool = true;	//изменение на противоположное значение
 	}
 }

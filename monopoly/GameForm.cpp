@@ -4,9 +4,14 @@
 #include <msclr/marshal_cppstd.h>
 #include <chrono>
 
-std::string Player::userName = "UserName";
-int Player::cash = 3000;
-int Player::streetMoney = 75;
+Player::Player() {
+	userName = "UserName";
+	cash = 3000;
+	streetMoney = 85;
+}
+
+Player* users = new Player[2];
+
 Cell board[40];
 
 using namespace monopoly;
@@ -90,15 +95,15 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ e)
 {
-	UserName->Text = gcnew System::String(Player::userName.c_str());
+	UserName->Text = gcnew System::String(users[0].userName.c_str());
 
-	std::string buffString = std::to_string(Player::cash + Player::streetMoney) + "$";
+	std::string buffString = std::to_string(users[0].cash + users[0].streetMoney) + "$";
 	AllMoney->Text = gcnew System::String(buffString.c_str());
 
-	buffString = std::to_string(Player::cash) + "$";
+	buffString = std::to_string(users[0].cash) + "$";
 	cash->Text = gcnew System::String(buffString.c_str());
 
-	buffString = std::to_string(Player::streetMoney) + "$";
+	buffString = std::to_string(users[0].streetMoney) + "$";
 	streetMoney->Text = gcnew System::String(buffString.c_str());
 
 	array<PictureBox^>^ pictureBoxes = gcnew array<PictureBox^>(40) {

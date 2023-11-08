@@ -967,10 +967,13 @@ namespace monopoly {
 
 class Player {
 public:
-	static std::string userName;
-	static int cash;
-	static int streetMoney;
+	Player();
+	std::string userName = "sdfsdf";
+	int cash = 3000;
+	int streetMoney = 85;
 };
+
+extern Player* users;
 
 class Cell
 {
