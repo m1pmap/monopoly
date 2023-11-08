@@ -18,13 +18,59 @@ namespace monopoly {
 	public ref class GameForm : public System::Windows::Forms::Form
 	{
 	public:
-		GameForm(GameMenu^ parent)
+		GameForm(GameMenu^ parent, int playersNum)
 		{
 			InitializeComponent();
 			//
 			//TODO: добавьте код конструктора
 			//
 			parentForm = parent;
+
+			/*array<PictureBox^, 1>^ players = gcnew array<PictureBox^, 1>(3);
+			for (int i = 0; i < players->Length; i++)
+			{
+				players[i] = gcnew PictureBox();
+				players[i]->Location = System::Drawing::Point(1401 + i * 18, 882 + i * 48);
+				players[i]->Size = System::Drawing::Size(43, 42);
+				players[i]->BackColor = Color::Transparent;
+				players[i]->Image = Image::FromFile(Application::StartupPath + String::Format("\\assets\\playerColor{0}.png", i + 1));
+				this->Controls->Add(players[i]);
+				players[i]->BringToFront();
+			}
+			
+			array<PictureBox^>^ pictureBoxes = gcnew array<PictureBox^>(40) {
+				Player1, Player2
+			};*/
+			
+			Player1 = gcnew PictureBox();
+			Player1->Location = System::Drawing::Point(1401, 882);
+			Player1->Size = System::Drawing::Size(43, 42);
+			Player1->BackColor = Color::Transparent;
+			Player1->Image = Image::FromFile(Application::StartupPath + "\\assets\\playerColor1.png");
+			this->Controls->Add(Player1);
+			Player1->BringToFront();
+
+			if (playersNum >= 2)
+			{
+				Player2 = gcnew PictureBox();
+				Player2->Location = System::Drawing::Point(1419, 930);
+				Player2->Size = System::Drawing::Size(43, 42);
+				Player2->BackColor = Color::Transparent;
+				Player2->Image = Image::FromFile(Application::StartupPath + "\\assets\\playerColor2.png");
+				this->Controls->Add(Player2);
+				Player2->BringToFront();
+			}
+			if (playersNum == 3)
+			{
+
+				Player3 = gcnew PictureBox();
+				Player3->Location = System::Drawing::Point(1450, 870);
+				Player3->Size = System::Drawing::Size(43, 42);
+				Player3->BackColor = Color::Transparent;
+				Player3->Image = Image::FromFile(Application::StartupPath + "\\assets\\playerColor3.png");
+				this->Controls->Add(Player3);
+				Player3->BringToFront();
+			}
 		}
 
 	protected:
@@ -46,6 +92,9 @@ namespace monopoly {
 		/// Обязательная переменная конструктора.
 		/// </summary>
 
+	private: System::Windows::Forms::PictureBox^ Player1;
+	private: System::Windows::Forms::PictureBox^ Player2;
+	private: System::Windows::Forms::PictureBox^ Player3;
 	private: System::Windows::Forms::PictureBox^ backToMenu;
 	private: System::Windows::Forms::PictureBox^ cell_11;
 	private: System::Windows::Forms::PictureBox^ cell_12;
@@ -100,7 +149,7 @@ namespace monopoly {
 	private: System::Windows::Forms::PictureBox^ fullBalance;
 	public: System::Windows::Forms::TextBox^ cash;
 	public: System::Windows::Forms::TextBox^ streetMoney;
-	private: System::Windows::Forms::PictureBox^ pictureBox1;
+
 	public:
 	private: System::Windows::Forms::Timer^ timer2;
 
@@ -178,7 +227,6 @@ namespace monopoly {
 			this->fullBalance = (gcnew System::Windows::Forms::PictureBox());
 			this->cash = (gcnew System::Windows::Forms::TextBox());
 			this->streetMoney = (gcnew System::Windows::Forms::TextBox());
-			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->timer2 = (gcnew System::Windows::Forms::Timer(this->components));
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->backToMenu))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_11))->BeginInit();
@@ -227,7 +275,6 @@ namespace monopoly {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dice_2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->showFullBalance))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->fullBalance))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// backToMenu
@@ -806,14 +853,6 @@ namespace monopoly {
 			this->streetMoney->MouseEnter += gcnew System::EventHandler(this, &GameForm::UnFocus);
 			this->streetMoney->MouseLeave += gcnew System::EventHandler(this, &GameForm::UnFocus);
 			// 
-			// pictureBox1
-			// 
-			this->pictureBox1->Location = System::Drawing::Point(1419, 907);
-			this->pictureBox1->Name = L"pictureBox1";
-			this->pictureBox1->Size = System::Drawing::Size(49, 50);
-			this->pictureBox1->TabIndex = 91;
-			this->pictureBox1->TabStop = false;
-			// 
 			// timer2
 			// 
 			this->timer2->Interval = 10;
@@ -828,7 +867,6 @@ namespace monopoly {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
 			this->ClientSize = System::Drawing::Size(1904, 1041);
-			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->streetMoney);
 			this->Controls->Add(this->cash);
 			this->Controls->Add(this->fullBalance);
@@ -933,7 +971,6 @@ namespace monopoly {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dice_2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->showFullBalance))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->fullBalance))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -971,6 +1008,7 @@ public:
 	std::string userName = "sdfsdf";
 	int cash = 3000;
 	int streetMoney = 85;
+	static int playersNum;
 };
 
 extern Player* users;
@@ -981,5 +1019,3 @@ public:
 	int x;
 	int y;
 };
-
-

@@ -308,8 +308,3 @@ private: System::Void Unfocus(System::Object^ sender, System::EventArgs^ e);
 private: System::Void changeName_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }
-class User
-{
-public:
-	static std::string userName;
-};

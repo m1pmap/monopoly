@@ -10,6 +10,8 @@ Player::Player() {
 	streetMoney = 85;
 }
 
+int Player::playersNum = 0;
+
 Player* users = new Player[2];
 
 Cell board[40];
@@ -90,7 +92,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 	}
 	timer2->Start();
 	Pos = (Pos + i1 + i2) % 40;
-	pictureBox1->Location = System::Drawing::Point(board[Pos - 1].x, board[Pos - 1].y);
+	Player1->Location = System::Drawing::Point(board[Pos - 1].x, board[Pos - 1].y);
 }
 
 System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ e)
@@ -106,14 +108,14 @@ System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ 
 	buffString = std::to_string(users[0].streetMoney) + "$";
 	streetMoney->Text = gcnew System::String(buffString.c_str());
 
-	array<PictureBox^>^ pictureBoxes = gcnew array<PictureBox^>(40) {
+	array<PictureBox^>^ cells = gcnew array<PictureBox^>(40) {
 		cell_1, cell_2, cell_3, cell_4, cell_5, cell_6, cell_7, cell_8, cell_9, cell_10, cell_11, cell_12, cell_13, cell_14, cell_15, cell_16, cell_17, cell_18, cell_19, cell_20,
 			cell_21, cell_22, cell_23, cell_24, cell_25, cell_26, cell_27, cell_28, cell_29, cell_30, cell_31, cell_32, cell_33, cell_34, cell_35, cell_36, cell_37, cell_38, cell_39, cell_40
 	};
 	for (int i = 0; i < 40; i++)
 	{
-		board[i].x = pictureBoxes[i]->Location.X + 12;
-		board[i].y = pictureBoxes[i]->Location.Y + 12;
+		board[i].x = cells[i]->Location.X + 12;
+		board[i].y = cells[i]->Location.Y + 12;
 	}
 }
 

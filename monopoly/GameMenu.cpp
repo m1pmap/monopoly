@@ -21,7 +21,8 @@ int currentImageIndex = 0;
 
 System::Void GameMenu::StartGame_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	GameForm^ f = gcnew GameForm(this);
+	int playersNum = 2;
+	GameForm^ f = gcnew GameForm(this, playersNum);
 	f->Show();
 	this->Hide();
 }
