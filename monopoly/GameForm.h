@@ -41,7 +41,6 @@ namespace monopoly {
 			array<PictureBox^>^ pictureBoxes = gcnew array<PictureBox^>(40) {
 				Player1, Player2
 			};*/
-			
 			Player1 = gcnew PictureBox();
 			Player1->Location = System::Drawing::Point(1401, 910);
 			Player1->Size = System::Drawing::Size(43, 42);
@@ -1002,8 +1001,11 @@ public:
 	int x;
 	int y;
 	int cellPos;
+	std::string cellIvent;
+	std::string name;
 	int OnCell(Player users[]);
-	void MoveOnCell(System::Windows::Forms::PictureBox^ player1, System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3, Player users[]);
+
+	void MoveOnCell(System::Windows::Forms::PictureBox^ player1, System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3);
 };
 
 class Player {
@@ -1016,7 +1018,7 @@ public:
 	int streetMoney;
 	static int playersNum;
 
-	void PlayersMoving(System::Windows::Forms::PictureBox^ player, int dice, Cell board[]);
+	void PlayersMoving(System::Windows::Forms::PictureBox^ player, int dice, Cell board[], System::Windows::Forms::PictureBox^ player1, System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3);
 
 	int GetCurrentPos();
 
