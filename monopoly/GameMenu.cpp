@@ -16,12 +16,14 @@ int main(array<String^>^ args)
 	Application::Run(% form1);
 }
 
+int Player::playersNum = 2;
+
 bool arrowBool = true;
 int currentImageIndex = 0;
 
 System::Void GameMenu::StartGame_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	int playersNum = 2;
+	int playersNum = Player::playersNum;
 	GameForm^ f = gcnew GameForm(this, playersNum);
 	f->Show();
 	this->Hide();

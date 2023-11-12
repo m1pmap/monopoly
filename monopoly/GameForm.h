@@ -43,7 +43,7 @@ namespace monopoly {
 			};*/
 			
 			Player1 = gcnew PictureBox();
-			Player1->Location = System::Drawing::Point(1401, 882);
+			Player1->Location = System::Drawing::Point(1401, 910);
 			Player1->Size = System::Drawing::Size(43, 42);
 			Player1->BackColor = Color::Transparent;
 			Player1->Image = Image::FromFile(Application::StartupPath + "\\assets\\playerColor1.png");
@@ -53,7 +53,7 @@ namespace monopoly {
 			if (playersNum >= 2)
 			{
 				Player2 = gcnew PictureBox();
-				Player2->Location = System::Drawing::Point(1419, 930);
+				Player2->Location = System::Drawing::Point(1430, 870);
 				Player2->Size = System::Drawing::Size(43, 42);
 				Player2->BackColor = Color::Transparent;
 				Player2->Image = Image::FromFile(Application::StartupPath + "\\assets\\playerColor2.png");
@@ -92,9 +92,9 @@ namespace monopoly {
 		/// Обязательная переменная конструктора.
 		/// </summary>
 
-	private: System::Windows::Forms::PictureBox^ Player1;
-	private: System::Windows::Forms::PictureBox^ Player2;
-	private: System::Windows::Forms::PictureBox^ Player3;
+	public: System::Windows::Forms::PictureBox^ Player1;
+	public: System::Windows::Forms::PictureBox^ Player2;
+	public: System::Windows::Forms::PictureBox^ Player3;
 	private: System::Windows::Forms::PictureBox^ backToMenu;
 	private: System::Windows::Forms::PictureBox^ cell_11;
 	private: System::Windows::Forms::PictureBox^ cell_12;
@@ -151,7 +151,7 @@ namespace monopoly {
 	public: System::Windows::Forms::TextBox^ streetMoney;
 
 	public:
-	private: System::Windows::Forms::Timer^ timer2;
+
 
 	public:
 	private:
@@ -227,7 +227,6 @@ namespace monopoly {
 			this->fullBalance = (gcnew System::Windows::Forms::PictureBox());
 			this->cash = (gcnew System::Windows::Forms::TextBox());
 			this->streetMoney = (gcnew System::Windows::Forms::TextBox());
-			this->timer2 = (gcnew System::Windows::Forms::Timer(this->components));
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->backToMenu))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_11))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_12))->BeginInit();
@@ -853,11 +852,6 @@ namespace monopoly {
 			this->streetMoney->MouseEnter += gcnew System::EventHandler(this, &GameForm::UnFocus);
 			this->streetMoney->MouseLeave += gcnew System::EventHandler(this, &GameForm::UnFocus);
 			// 
-			// timer2
-			// 
-			this->timer2->Interval = 10;
-			this->timer2->Tick += gcnew System::EventHandler(this, &GameForm::timer2_Tick);
-			// 
 			// GameForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -997,25 +991,39 @@ namespace monopoly {
 	private: System::Void showFullBalance_Click(System::Object^ sender, System::EventArgs^ e);
 
 	private: System::Void timer1_Tick(System::Object^ sender, System::EventArgs^ e);
-
-	private: System::Void timer2_Tick(System::Object^ sender, System::EventArgs^ e);
 };
 }
 
-class Player {
-public:
-	Player();
-	std::string userName = "sdfsdf";
-	int cash = 3000;
-	int streetMoney = 85;
-	static int playersNum;
-};
-
-extern Player* users;
+class Player;
 
 class Cell
 {
 public:
 	int x;
 	int y;
+	int cellPos;
+	int OnCell(Player users[]);
+	void MoveOnCell(System::Windows::Forms::PictureBox^ player1, System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3, Player users[]);
 };
+
+class Player {
+private: 
+	int currentPos = 40;
+public:
+	Player();
+	std::string userName;
+	int cash;
+	int streetMoney;
+	static int playersNum;
+
+	void PlayersMoving(System::Windows::Forms::PictureBox^ player, int dice, Cell board[]);
+
+	int GetCurrentPos();
+
+	void SetCurrentPos(int curPos);
+
+
+};
+
+extern Player* users;
+
