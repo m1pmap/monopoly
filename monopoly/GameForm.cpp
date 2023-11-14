@@ -17,6 +17,8 @@ Player* users = new Player[Player::playersNum]; //создание массива с пользовател
 
 Cell board[40]; //массив ячеек поля
 
+Chance chance[16]; //массив карточек Шанс
+
 using namespace monopoly;
 
 
@@ -28,6 +30,28 @@ void Player::PlayersMoving(System::Windows::Forms::PictureBox^ player, //метод, 
 	int pos = this->GetCurrentPos(); //узнаём текущую позицую фишки пользователя
 	if (pos >= 40) //если номер позиции(ячейки поля) больше чем кол-во ячеек, то уменьшаем их
 		pos -= 40;
+	if (dice < 0)
+	{
+		pos = this->GetCurrentPos() - 1;
+		this->SetCurrentPos(dice); //устанавливаем значени текущей позиции в место, равное текущей позиции + число на кубиках
+		if (this->GetCurrentPos() >= pos) //если позиция, в которую необходимо переместить кубики меньше чем текущая, то перемещение пойдёт до 40й ячейки, а потом позиция обнулиться
+		{
+			for (int i = pos; i >= 0; i--)
+			{
+				player->Location = System::Drawing::Point(board[i].x, board[i].y); //установка координат фишки на 1 ячейку вперёд
+				player->Refresh(); //обновление картинки, чтобы перемещение было заметно
+				System::Threading::Thread::Sleep(100);//остановка программы, для замедления анимации
+			}
+			pos = 39; //обнуление позиции
+		}
+		for (int i = pos; i >= this->GetCurrentPos() - 1; i--) //перемещение на 1 ячейку вперёд, пока не достигнется необходимая позиция ячейки
+		{
+			player->Location = System::Drawing::Point(board[i].x, board[i].y); //установка координат фики на 1 ячейку вперёд
+			player->Refresh();//обновление картинки, чтобы перемещение было заметно
+			System::Threading::Thread::Sleep(100);//остановка программы, для замедления анимации
+		}
+		return;
+	}
 	this->SetCurrentPos(dice); //устанавливаем значени текущей позиции в место, равное текущей позиции + число на кубиках
 	if (this->GetCurrentPos() <= pos) //если позиция, в которую необходимо переместить кубики меньше чем текущая, то перемещение пойдёт до 40й ячейки, а потом позиция обнулиться
 	{
@@ -58,15 +82,33 @@ int Player::GetCurrentPos() //возвращает текущую позицию пользователя
 
 void Player::SetCurrentPos(int dice) //устанавливает текущую позицию, равную текущей позиции + кубики
 {
-	if (this->currentPos + dice > 40)
+	if (dice >= 0)
 	{
-		this->currentPos = this->currentPos + dice - 40;
+		if (this->currentPos + dice > 40)
+			this->currentPos = this->currentPos + dice - 40;
+		else
+			this->currentPos += dice;
 	}
 	else
 	{
-		this->currentPos += dice;
+		if (this->currentPos + dice < 0)
+			this->currentPos = this->currentPos + dice + 40;
+		else
+			this->currentPos += dice;
 	}
+	
 }
+
+int Player::GetCash()
+{
+	return this->cash;
+}
+
+void Player::SetCash(int cash)
+{
+	this->cash = this->cash + cash;
+}
+
 
 //МЕТОДЫ КЛАССА CELL
 int Cell::OnCell(Player users[]) //возвращает кол-во игроков на определённой ячейке
@@ -108,6 +150,8 @@ void Cell::MoveOnCell(System::Windows::Forms::PictureBox^ player1, System::Windo
 		}
 	}
 }
+
+//МЕТОДЫ КЛАССА CHANCE
 
 
 //кнопка возвращения в главное меню и её свойства
@@ -153,17 +197,22 @@ System::Void GameForm::InformationAboutStreets(System::Object^ sender, System::E
 }
 
 void change_picture(System::Windows::Forms::PictureBox^ pictureBox, System::String^ file_path) { //функция изменения картинки
-	pictureBox->Image = Image::FromFile(Application::StartupPath + "\\assets\\dices\\" + file_path);
+	pictureBox->Image = Image::FromFile(Application::StartupPath + "\\assets\\" + file_path);
 }
+
+int randomChance;
 
 System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^ e)
 {
+	array<String^>^ personsPicture = gcnew array<String^>{ "person1.png", "person2.png", "person3.png", "person4.png", "person5.png", "person6.png"}; //создание массива путей к картинкам
+	int randomPerson = rand() % 6 + 1;
+	change_picture(this->persons, personsPicture[randomPerson - 1]);
+
+	Chance buff;
 	rollDice->Image = Image::FromFile(Application::StartupPath + "\\assets\\rollTheDice_onRoll.png"); //установк каринки, которая будет отображаться на кнопке, пока идёт бросок кубиков
 	rollDice->Refresh(); //обновления картинки
 
-	srand(time(NULL));
-
-	array<String^>^ images = gcnew array<String^>{ "dice_1.png", "dice_2.png", "dice_3.png", "dice_4.png", "dice_5.png", "dice_6.png"}; //создание массива путей к картинкам
+	array<String^>^ images = gcnew array<String^>{ "dices\\dice_1.png", "dices\\dice_2.png", "dices\\dice_3.png", "dices\\dice_4.png", "dices\\dice_5.png", "dices\\dice_6.png"}; //создание массива путей к картинкам
 	int sleepTime = 10; //время, на которое будет останавливаться программа
 	int dice = 0; //результат броска
 	for (int i = 0; i < 30; i++) {
@@ -179,13 +228,53 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 		System::Threading::Thread::Sleep(sleepTime); //остановка программы
 		dice = dice1_roll + dice2_roll; //установка результатов броска
 	}
-	setlocale(LC_ALL, "Russian");
 	users[0].PlayersMoving(Player1, dice, board, Player1, Player2, Player3); //перемещение фишки игрока
 	//users[1].PlayersMoving(Player2, 1, board, Player1, Player2, Player3);
 	//users[2].PlayersMoving(Player3, 12, board);
-	cash->Text = gcnew System::String(board[users[0].GetCurrentPos() - 1].name.c_str());
-	streetMoney->Text = gcnew System::String(board[users[0].GetCurrentPos() - 1].cellIvent.c_str());
+	showNameCurCell->Text = "Ты попал на ячейку" + "\r\n" + msclr::interop::marshal_as<System::String^>(board[users[0].GetCurrentPos() - 1].name);
+
+	std::srand(std::time(nullptr));
+	if (board[users[0].GetCurrentPos() - 1].definition == "street")
+	{
+		std::ifstream file(msclr::interop::marshal_as<std::string>(Application::StartupPath) + "/streets.txt");
+		std::vector<std::string> lines;
+		std::string line;
+		while (std::getline(file, line))
+			lines.push_back(line);
+		int randomStreet = std::rand() % lines.size();
+		std::string randomLine = lines[randomStreet];
+		textBox1->Text = gcnew String(randomLine.c_str());
+		file.close();
+	}
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "chance")
+	{
+		randomChance = rand() % 16;
+		std::string randomLine = chance[randomChance].action;
+		textBox1->Text = gcnew String(randomLine.c_str());
+
+		toPerform->Visible = true;
+	}
 }
+
+System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	if (chance[randomChance].cellToMove != 0)
+	{
+		int moveOn = chance[randomChance].cellToMove - users[0].GetCurrentPos();
+		if (chance[randomChance].cellToMove < 0)
+			moveOn = chance[randomChance].cellToMove;
+		users[0].PlayersMoving(Player1, moveOn, board, Player1, Player2, Player3);
+	}
+	if (chance[randomChance].addedCash != 0)
+		users[0].SetCash(chance[randomChance].addedCash);
+
+	std::string buffString = std::to_string(users[0].GetCash()) + "$";
+	cash->Text = gcnew System::String(buffString.c_str());
+	buffString = std::to_string(users[0].GetCash() + users[0].streetMoney) + "$";
+	AllMoney->Text = gcnew System::String(buffString.c_str());
+}
+
 System::Void GameForm::rollDice_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
 {
 	rollDice->Image = Image::FromFile(Application::StartupPath + "\\assets\\rollTheDice_onMouseDown.png");
@@ -210,11 +299,11 @@ System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ 
 	UserName->Text = gcnew System::String(users[0].userName.c_str()); //установка имени пользователя из объекта класса
 
 	//установка общего кол-ва денег пользователя из объекта класса
-	std::string buffString = std::to_string(users[0].cash + users[0].streetMoney) + "$";  
+	std::string buffString = std::to_string(users[0].GetCash() + users[0].streetMoney) + "$";
 	AllMoney->Text = gcnew System::String(buffString.c_str());
 
 	//установка наличных денег пользователя из объекта класса
-	buffString = std::to_string(users[0].cash) + "$";
+	buffString = std::to_string(users[0].GetCash()) + "$";
 	cash->Text = gcnew System::String(buffString.c_str());
 
 	//установка имени пользователя из объекта класса
@@ -234,9 +323,29 @@ System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ 
 		board[i].y = cells[i]->Location.Y + cells[i]->Height / 2 - Player1->Height / 2;
 		board[i].cellPos = i + 1;
 		std::getline(file, board[i].name);
-		std::getline(file, board[i].cellIvent);
+		std::getline(file, board[i].definition);
 	}
 	file.close();
+
+	std::ifstream file1(msclr::interop::marshal_as<std::string>(Application::StartupPath) + "/chance.txt");
+	if (file1.is_open())
+	{
+		for (int i = 0; i < 16; i++) //установка начальных значений каждой ячейки поля
+		{
+			int cellToMove;
+			int addedCash;
+
+			std::getline(file1, chance[i].action);
+			file1 >> cellToMove;
+			file1.ignore(); // пропуск символа новой строки
+			file1 >> addedCash;
+			file1.ignore();
+
+			chance[i].cellToMove = cellToMove;
+			chance[i].addedCash = addedCash;
+		}
+	}
+	file1.close();
 }
 
 System::Void GameForm::UnFocus(System::Object^ sender, System::EventArgs^ e)
