@@ -9,8 +9,10 @@
 Player::Player() //конструктор класса Player, который устанавливает начальные значения для каждого игрока 
 {
 	userName = "UserName";
-	cash = 3000;
-	streetMoney = 85;
+	this->currentPos = 40;
+	cash = 1500;
+	streetMoney = 0;
+	arrested = false;
 }
 
 Player* users = new Player[Player::playersNum]; //создание массива с пользователями
@@ -18,6 +20,8 @@ Player* users = new Player[Player::playersNum]; //создание массива с пользовател
 Cell board[40]; //массив ячеек поля
 
 Chance chance[16]; //массив карточек Шанс
+
+Street streets[22];
 
 using namespace monopoly;
 
@@ -109,6 +113,20 @@ void Player::SetCash(int cash)
 	this->cash = this->cash + cash;
 }
 
+bool Player::GetArrested()
+{
+	return this->arrested;
+}
+
+void Player::SetArrested(bool arrested)
+{
+	this->arrested = arrested;
+}
+
+void Player::SetOwnStreet(Street street)
+{
+	ownStreet.push_back(street);
+}
 
 //МЕТОДЫ КЛАССА CELL
 int Cell::OnCell(Player users[]) //возвращает кол-во игроков на определённой ячейке
@@ -152,6 +170,37 @@ void Cell::MoveOnCell(System::Windows::Forms::PictureBox^ player1, System::Windo
 }
 
 //МЕТОДЫ КЛАССА CHANCE
+std::string Chance::GetAction()
+{
+	return this->action;
+}
+void Chance::SetAction(std::string action)
+{
+	this->action = action;
+}
+int Chance::GetCellToMove()
+{
+	return this->cellToMove;
+}
+void Chance::SetCellToMove(int cellToMove)
+{
+	this->cellToMove = cellToMove;
+}
+int Chance::GetAddedCash()
+{
+	return this->addedCash;
+}
+void Chance::SetAddedCash(int addedCash)
+{
+	this->addedCash = addedCash;
+}
+
+//МЕТОДЫ КЛАССА STREET
+Street::Street()
+{
+	owner = "monopoly";
+}
+
 
 
 //кнопка возвращения в главное меню и её свойства
@@ -204,6 +253,9 @@ int randomChance;
 
 System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^ e)
 {
+	toPerform->Visible = false;
+	toPerform->Enabled = true;
+
 	array<String^>^ personsPicture = gcnew array<String^>{ "person1.png", "person2.png", "person3.png", "person4.png", "person5.png", "person6.png"}; //создание массива путей к картинкам
 	int randomPerson = rand() % 6 + 1;
 	change_picture(this->persons, personsPicture[randomPerson - 1]);
@@ -228,7 +280,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 		System::Threading::Thread::Sleep(sleepTime); //остановка программы
 		dice = dice1_roll + dice2_roll; //установка результатов броска
 	}
-	users[0].PlayersMoving(Player1, dice, board, Player1, Player2, Player3); //перемещение фишки игрока
+	users[0].PlayersMoving(Player1, 7, board, Player1, Player2, Player3); //перемещение фишки игрока
 	//users[1].PlayersMoving(Player2, 1, board, Player1, Player2, Player3);
 	//users[2].PlayersMoving(Player3, 12, board);
 	showNameCurCell->Text = "Ты попал на ячейку" + "\r\n" + msclr::interop::marshal_as<System::String^>(board[users[0].GetCurrentPos() - 1].name);
@@ -245,34 +297,70 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 		std::string randomLine = lines[randomStreet];
 		textBox1->Text = gcnew String(randomLine.c_str());
 		file.close();
+		int streetIndex;
+		for (int i = 0; i < 22; i++)
+			if (board[users[0].GetCurrentPos() - 1].name == streets[i].streetName)
+				streetIndex = i;
+		users[1].userName = "sdfsdf";
+		streets[7].owner = "sdfsdf";
+		users[1].SetOwnStreet(streets[7]);
+		if (streets[streetIndex].owner == "monopoly")
+		{
+			std::string buffString = std::to_string(streets[streetIndex].cost) + "$";
+			textBox1->Text += "\r\n" + "\r\n" + "Состояние: Готова к продаже";
+			textBox1->Text += "\r\n" + "Стоимость покупки " + msclr::interop::marshal_as<System::String^>(buffString);
+		}
+		else
+		{
+			std::string buffString = streets[streetIndex].CheckOwner(users, streets[streetIndex]);
+			if (users[0].userName == buffString)
+			{
+				textBox1->Text += "\r\n" + "\r\n" + "Это твоя собственность" + "\r\n" + "Тебе ничего не надо платить";
+			}
+			else
+			{
+				textBox1->Text += "\r\n" + "\r\n" + "Владелец: " + msclr::interop::marshal_as<System::String^>(buffString);
+				buffString = std::to_string(streets[streetIndex].rent[0]) + "$";
+				textBox1->Text += "\r\n" + "Вам придётся заплатить: " + msclr::interop::marshal_as<System::String^>(buffString);
+			}
+			
+		}
 	}
 
 	if (board[users[0].GetCurrentPos() - 1].definition == "chance")
 	{
 		randomChance = rand() % 16;
-		std::string randomLine = chance[randomChance].action;
+		std::string randomLine = chance[randomChance].GetAction();
 		textBox1->Text = gcnew String(randomLine.c_str());
 
 		toPerform->Visible = true;
+
+		if (randomChance == 7)
+			users[0].SetArrested(true);
 	}
+
+	std::string buffString = std::to_string(streets[21].rent[4]) + "$";
+	cash->Text = gcnew System::String(buffString.c_str());
 }
 
 System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	if (chance[randomChance].cellToMove != 0)
+	if (chance[randomChance].GetCellToMove() != 0)
 	{
-		int moveOn = chance[randomChance].cellToMove - users[0].GetCurrentPos();
-		if (chance[randomChance].cellToMove < 0)
-			moveOn = chance[randomChance].cellToMove;
+		int moveOn = chance[randomChance].GetCellToMove() - users[0].GetCurrentPos();
+		if (chance[randomChance].GetCellToMove() < 0)
+			moveOn = chance[randomChance].GetCellToMove();
 		users[0].PlayersMoving(Player1, moveOn, board, Player1, Player2, Player3);
 	}
-	if (chance[randomChance].addedCash != 0)
-		users[0].SetCash(chance[randomChance].addedCash);
+	if (chance[randomChance].GetAddedCash() != 0)
+		users[0].SetCash(chance[randomChance].GetAddedCash());
 
 	std::string buffString = std::to_string(users[0].GetCash()) + "$";
 	cash->Text = gcnew System::String(buffString.c_str());
 	buffString = std::to_string(users[0].GetCash() + users[0].streetMoney) + "$";
 	AllMoney->Text = gcnew System::String(buffString.c_str());
+
+	toPerform->Enabled = false;
 }
 
 System::Void GameForm::rollDice_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
@@ -334,18 +422,40 @@ System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ 
 		{
 			int cellToMove;
 			int addedCash;
+			std::string a;
 
-			std::getline(file1, chance[i].action);
+			std::getline(file1, a);
 			file1 >> cellToMove;
 			file1.ignore(); // пропуск символа новой строки
 			file1 >> addedCash;
 			file1.ignore();
 
-			chance[i].cellToMove = cellToMove;
-			chance[i].addedCash = addedCash;
+			chance[i].SetAction(a);
+			chance[i].SetCellToMove(cellToMove);
+			chance[i].SetAddedCash(addedCash);
 		}
 	}
 	file1.close();
+
+	std::ifstream file2(msclr::interop::marshal_as<std::string>(Application::StartupPath) + "/streetsInfo.txt");
+
+	if (file2.is_open())
+	{
+		for (int i = 0; i < 22; i++)
+		{
+			std::getline(file2, streets[i].streetName);
+			for (int j = 0; j < 6; j++)
+			{
+				file2 >> streets[i].rent[j];
+			}
+			file2.ignore();
+			file2 >> streets[i].buildCost;
+			file2.ignore();
+			file2 >> streets[i].cost;
+			file2.ignore();
+		}
+		file2.close();
+	}
 }
 
 System::Void GameForm::UnFocus(System::Object^ sender, System::EventArgs^ e)

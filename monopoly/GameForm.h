@@ -905,7 +905,7 @@ public:
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->ReadOnly = true;
 			this->textBox1->ShortcutsEnabled = false;
-			this->textBox1->Size = System::Drawing::Size(303, 313);
+			this->textBox1->Size = System::Drawing::Size(295, 429);
 			this->textBox1->TabIndex = 92;
 			this->textBox1->TabStop = false;
 			this->textBox1->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -929,7 +929,7 @@ public:
 			// 
 			this->toPerform->BackColor = System::Drawing::Color::Transparent;
 			this->toPerform->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toPerform.Image")));
-			this->toPerform->Location = System::Drawing::Point(1573, 611);
+			this->toPerform->Location = System::Drawing::Point(1573, 698);
 			this->toPerform->Name = L"toPerform";
 			this->toPerform->Size = System::Drawing::Size(287, 53);
 			this->toPerform->TabIndex = 94;
@@ -1087,6 +1087,7 @@ public:
 }
 
 class Player;
+class Street;
 
 class Cell
 {
@@ -1104,10 +1105,14 @@ public:
 
 class Player {
 private: 
-	int currentPos = 40;
+	int currentPos;
 	int cash;
+	bool arrested;
 public:
 	Player();
+	std::vector<Street> ownStreet;
+	void SetOwnStreet(Street street);
+
 	std::string userName;
 	int streetMoney;
 	static int playersNum;
@@ -1118,15 +1123,52 @@ public:
 	int GetCash();
 	void SetCash(int cash);
 
+	bool GetArrested();
+	void SetArrested(bool arrested);
+
 	void PlayersMoving(System::Windows::Forms::PictureBox^ player, int dice, Cell board[], System::Windows::Forms::PictureBox^ player1, System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3);
 };
 
-extern Player* users;
+class Street
+{
+public:
+	Street();
+	std::string streetName;
+	int rent[6];
+	std::string owner;
+	int buildCost;
+	int cost;
+	std::string CheckOwner(Player users[], Street street)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < users[i].ownStreet.size(); i++)
+			{
+				if (users[i].ownStreet[j].streetName == street.streetName)
+				{
+					return users[i].userName;
+				}
+			}
+		}
+	}
+};
 
 class Chance
 {
-public:
 	std::string action;
 	int cellToMove;
-	int addedCash;		
+	int addedCash;
+public:	
+	std::string GetAction();
+	void SetAction(std::string action);
+
+	int GetCellToMove();
+	void SetCellToMove(int cellToMove);
+
+	int GetAddedCash();
+	void SetAddedCash(int addedCash);
 };
+
+
+
+extern Player* users;
