@@ -8,7 +8,7 @@
 
 Player::Player() //конструктор класса Player, который устанавливает начальные значения для каждого игрока 
 {
-	userName = "UserName";
+	userName = "User";
 	this->currentPos = 40;
 	cash = 1500;
 	streetMoney = 0;
@@ -21,16 +21,21 @@ Cell board[40]; //массив ячеек поля
 
 Chance chance[16]; //массив карточек Шанс
 
+Treasury treasury[16];
+
 Street streets[22];
+
+SubStreet subStreets[2];
 
 using namespace monopoly;
 
 
 //МЕТОДЫ КЛАССА PLAYER
-void Player::PlayersMoving(System::Windows::Forms::PictureBox^ player, //метод, который позволяет перемещать фишку
+bool Player::PlayersMoving(System::Windows::Forms::PictureBox^ player, //метод, который позволяет перемещать фишку
 	int dice, Cell board[], System::Windows::Forms::PictureBox^ player1, //игрока на определённое место на игровом поле
 	System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3)  
 {
+	bool checkStart = false;
 	int pos = this->GetCurrentPos(); //узнаём текущую позицую фишки пользователя
 	if (pos >= 40) //если номер позиции(ячейки поля) больше чем кол-во ячеек, то уменьшаем их
 		pos -= 40;
@@ -38,13 +43,15 @@ void Player::PlayersMoving(System::Windows::Forms::PictureBox^ player, //метод, 
 	{
 		pos = this->GetCurrentPos() - 1;
 		this->SetCurrentPos(dice); //устанавливаем значени текущей позиции в место, равное текущей позиции + число на кубиках
-		if (this->GetCurrentPos() >= pos) //если позиция, в которую необходимо переместить кубики меньше чем текущая, то перемещение пойдёт до 40й ячейки, а потом позиция обнулиться
+		if (this->GetCurrentPos() > pos) //если позиция, в которую необходимо переместить кубики меньше чем текущая, то перемещение пойдёт до 40й ячейки, а потом позиция обнулиться
 		{
 			for (int i = pos; i >= 0; i--)
 			{
 				player->Location = System::Drawing::Point(board[i].x, board[i].y); //установка координат фишки на 1 ячейку вперёд
 				player->Refresh(); //обновление картинки, чтобы перемещение было заметно
 				System::Threading::Thread::Sleep(100);//остановка программы, для замедления анимации
+				if (i == 39)
+					checkStart = true;
 			}
 			pos = 39; //обнуление позиции
 		}
@@ -53,8 +60,10 @@ void Player::PlayersMoving(System::Windows::Forms::PictureBox^ player, //метод, 
 			player->Location = System::Drawing::Point(board[i].x, board[i].y); //установка координат фики на 1 ячейку вперёд
 			player->Refresh();//обновление картинки, чтобы перемещение было заметно
 			System::Threading::Thread::Sleep(100);//остановка программы, для замедления анимации
+			if (i == 39)
+				checkStart = true;
 		}
-		return;
+		return  checkStart;
 	}
 	this->SetCurrentPos(dice); //устанавливаем значени текущей позиции в место, равное текущей позиции + число на кубиках
 	if (this->GetCurrentPos() <= pos) //если позиция, в которую необходимо переместить кубики меньше чем текущая, то перемещение пойдёт до 40й ячейки, а потом позиция обнулиться
@@ -64,6 +73,8 @@ void Player::PlayersMoving(System::Windows::Forms::PictureBox^ player, //метод, 
 			player->Location = System::Drawing::Point(board[i].x, board[i].y); //установка координат фишки на 1 ячейку вперёд
 			player->Refresh(); //обновление картинки, чтобы перемещение было заметно
 			System::Threading::Thread::Sleep(100);//остановка программы, для замедления анимации
+			if (i == 39)
+				checkStart = true;
 		}
 		pos = 0; //обнуление позиции
 	}
@@ -72,11 +83,15 @@ void Player::PlayersMoving(System::Windows::Forms::PictureBox^ player, //метод, 
 		player->Location = System::Drawing::Point(board[i].x, board[i].y); //установка координат фики на 1 ячейку вперёд
 		player->Refresh();//обновление картинки, чтобы перемещение было заметно
 		System::Threading::Thread::Sleep(100);//остановка программы, для замедления анимации
+		if (i == 39)
+			checkStart = true;
 	}
 	for (int i = 0; i < 40; i++) //проверка поля на фишки, которые находятся на одной ячейке и размещение их рядом
 	{ 
 		board[i].MoveOnCell(player1, player2, player3);
 	}
+
+	return checkStart;
 }
 
 int Player::GetCurrentPos() //возвращает текущую позицию пользователя
@@ -110,7 +125,7 @@ int Player::GetCash()
 
 void Player::SetCash(int cash)
 {
-	this->cash = this->cash + cash;
+	this->cash += cash;
 }
 
 bool Player::GetArrested()
@@ -125,7 +140,21 @@ void Player::SetArrested(bool arrested)
 
 void Player::SetOwnStreet(Street street)
 {
-	ownStreet.push_back(street);
+	this->ownStreet.push_back(street);
+}
+
+void Player::SetOwnSubStreet(SubStreet subStreet)
+{
+	this->ownSubStreet.push_back(subStreet);
+}
+
+int Player::GetStreetMoney()
+{
+	return this->streetMoney;
+}
+void Player::SetStreetMoney(int streetMoney)
+{
+	this->streetMoney += streetMoney;
 }
 
 //МЕТОДЫ КЛАССА CELL
@@ -199,8 +228,69 @@ void Chance::SetAddedCash(int addedCash)
 Street::Street()
 {
 	owner = "monopoly";
+	housesCount = 0;
 }
 
+std::string Street::CheckOwner(Player users[], Street street) 
+{
+	for (int i = 0; i < Player::playersNum; i++) {
+		for (int j = 0; j < users[i].ownStreet.size(); j++) {
+			if (users[i].ownStreet[j].streetName == street.streetName) {
+				return users[i].userName;
+			}
+		}
+	}
+	return "";
+}
+
+//МЕТОДЫ КЛАССА TREASURY
+std::string Treasury::GetAction()
+{
+	return this->action;
+}
+void Treasury::SetAction(std::string action)
+{
+	this->action = action;
+}
+int Treasury::GetCellToMove()
+{
+	return this->cellToMove;
+}
+void Treasury::SetCellToMove(int cellToMove)
+{
+	this->cellToMove = cellToMove;
+}
+int Treasury::GetAddedCash()
+{
+	return this->addedCash;
+}
+void Treasury::SetAddedCash(int addedCash)
+{
+	this->addedCash = addedCash;
+}
+
+
+//МЕТОДЫ КЛАССА SubStreet
+
+SubStreet::SubStreet()
+{
+	this->rent[0] = 25;
+	this->rent[1] = 75;
+	this->owner = "monopoly";
+	this->cost = 100;
+}
+
+std::string SubStreet::CheckOwner(Player users[], SubStreet subStreet)
+{
+	for (int i = 0; i < Player::playersNum; i++) {
+		for (int j = 0; j < users[i].ownSubStreet.size(); j++) {
+			if (users[i].ownSubStreet[j].subStreetName == subStreet.subStreetName) {
+				return users[i].userName;
+			}
+		}
+	}
+	return "";
+}
 
 
 //кнопка возвращения в главное меню и её свойства
@@ -250,9 +340,16 @@ void change_picture(System::Windows::Forms::PictureBox^ pictureBox, System::Stri
 }
 
 int randomChance;
+int streetIndex;
+int randomTreasury;
 
 System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^ e)
 {
+	buy->Visible = false;
+	buy->Enabled = true;
+	moveOn->Visible = false;
+	moveOn->Enabled = true;
+
 	toPerform->Visible = false;
 	toPerform->Enabled = true;
 
@@ -263,6 +360,10 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 	Chance buff;
 	rollDice->Image = Image::FromFile(Application::StartupPath + "\\assets\\rollTheDice_onRoll.png"); //установк каринки, которая будет отображаться на кнопке, пока идёт бросок кубиков
 	rollDice->Refresh(); //обновления картинки
+
+
+
+
 
 	array<String^>^ images = gcnew array<String^>{ "dices\\dice_1.png", "dices\\dice_2.png", "dices\\dice_3.png", "dices\\dice_4.png", "dices\\dice_5.png", "dices\\dice_6.png"}; //создание массива путей к картинкам
 	int sleepTime = 10; //время, на которое будет останавливаться программа
@@ -280,12 +381,32 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 		System::Threading::Thread::Sleep(sleepTime); //остановка программы
 		dice = dice1_roll + dice2_roll; //установка результатов броска
 	}
-	users[0].PlayersMoving(Player1, 7, board, Player1, Player2, Player3); //перемещение фишки игрока
-	//users[1].PlayersMoving(Player2, 1, board, Player1, Player2, Player3);
-	//users[2].PlayersMoving(Player3, 12, board);
+
+
+
+
+	bool checkStart = users[0].PlayersMoving(Player1, dice, board, Player1, Player2, Player3);
+	//users[1].PlayersMoving(Player2, 2, board, Player1, Player2, Player3);
+	//users[2].PlayersMoving(Player3, 2, board, Player1, Player2, Player3);//перемещение фишки игрока
+	if (checkStart)
+	{
+		users[0].SetCash(200);
+		std::string buffString = std::to_string(users[0].GetCash()) + "$";
+		cash->Text = gcnew System::String(buffString.c_str());
+		buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+		AllMoney->Text = gcnew System::String(buffString.c_str());
+	}
 	showNameCurCell->Text = "Ты попал на ячейку" + "\r\n" + msclr::interop::marshal_as<System::String^>(board[users[0].GetCurrentPos() - 1].name);
 
 	std::srand(std::time(nullptr));
+
+
+	/*subStreets[0].owner = "User";
+	users[1].SetOwnSubStreet(subStreets[0]);
+
+	subStreets[1].owner = "User";
+	users[1].SetOwnSubStreet(subStreets[1]);*/
+
 	if (board[users[0].GetCurrentPos() - 1].definition == "street")
 	{
 		std::ifstream file(msclr::interop::marshal_as<std::string>(Application::StartupPath) + "/streets.txt");
@@ -293,22 +414,20 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 		std::string line;
 		while (std::getline(file, line))
 			lines.push_back(line);
+		file.close();
 		int randomStreet = std::rand() % lines.size();
 		std::string randomLine = lines[randomStreet];
 		textBox1->Text = gcnew String(randomLine.c_str());
-		file.close();
-		int streetIndex;
 		for (int i = 0; i < 22; i++)
 			if (board[users[0].GetCurrentPos() - 1].name == streets[i].streetName)
 				streetIndex = i;
-		users[1].userName = "sdfsdf";
-		streets[7].owner = "sdfsdf";
-		users[1].SetOwnStreet(streets[7]);
 		if (streets[streetIndex].owner == "monopoly")
 		{
 			std::string buffString = std::to_string(streets[streetIndex].cost) + "$";
 			textBox1->Text += "\r\n" + "\r\n" + "Состояние: Готова к продаже";
 			textBox1->Text += "\r\n" + "Стоимость покупки " + msclr::interop::marshal_as<System::String^>(buffString);
+			buy->Visible = true;
+			moveOn->Visible = true;
 		}
 		else
 		{
@@ -316,16 +435,22 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 			if (users[0].userName == buffString)
 			{
 				textBox1->Text += "\r\n" + "\r\n" + "Это твоя собственность" + "\r\n" + "Тебе ничего не надо платить";
+				moveOn->Visible = true;
 			}
 			else
 			{
 				textBox1->Text += "\r\n" + "\r\n" + "Владелец: " + msclr::interop::marshal_as<System::String^>(buffString);
-				buffString = std::to_string(streets[streetIndex].rent[0]) + "$";
+				buffString = std::to_string(streets[streetIndex].rent[streets[streetIndex].housesCount]) + "$";
 				textBox1->Text += "\r\n" + "Вам придётся заплатить: " + msclr::interop::marshal_as<System::String^>(buffString);
+				moveOn->Visible = true;
 			}
 			
 		}
 	}
+
+
+
+
 
 	if (board[users[0].GetCurrentPos() - 1].definition == "chance")
 	{
@@ -334,34 +459,299 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 		textBox1->Text = gcnew String(randomLine.c_str());
 
 		toPerform->Visible = true;
+		moveOn->Visible = true;
+		moveOn->Enabled = false;
 
 		if (randomChance == 7)
 			users[0].SetArrested(true);
 	}
 
-	std::string buffString = std::to_string(streets[21].rent[4]) + "$";
-	cash->Text = gcnew System::String(buffString.c_str());
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "treasury")
+	{
+		randomTreasury = rand() % 16;
+		std::string randomLine = treasury[randomTreasury].GetAction();
+		textBox1->Text = gcnew String(randomLine.c_str());
+
+		toPerform->Visible = true;
+		moveOn->Enabled = false;
+		moveOn->Visible = true;
+
+		if (randomChance == 6)
+			users[0].SetArrested(true);
+	}
+
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "tax")
+	{
+		toPerform->Visible = true;
+		moveOn->Visible = true;
+		moveOn->Enabled = false;
+		textBox1->Text = "\r\n" + "Теперь ты вынужден заплатить 100$";
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "superTax")
+	{
+		toPerform->Visible = true;
+		moveOn->Visible = true;
+		moveOn->Enabled = false;
+		textBox1->Text = "\r\n" + "Теперь ты вынужден заплатить 200$";
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "freeParking")
+	{
+		moveOn->Visible = true;
+		textBox1->Text = "\r\n" + "Обычная парковка, в обычном городе. Тут не на что смотреть... Хотя нет, я ошибся, она бесплатная, а это редкость в обычном городе";
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "railway")
+	{
+		std::ifstream file4(msclr::interop::marshal_as<std::string>(Application::StartupPath) + "/railway.txt");
+		std::vector<std::string> lines;
+		std::string line;
+		while (std::getline(file4, line))
+			lines.push_back(line);
+		file4.close();
+		int randomRailway = std::rand() % lines.size();
+		std::string randomLine = lines[randomRailway];
+		textBox1->Text = gcnew String(randomLine.c_str());
+
+		moveOn->Visible = true;
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "prison")
+	{
+		moveOn->Visible = true;
+		textBox1->Text = "\r\n" + "А это тюрьма. Как же хорошо, что мы не там сейчас. А вот если не платить налоги, то можно запросто угодить туда";
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "goToPrison")
+	{
+		toPerform->Visible = true;
+		moveOn->Visible = true;
+		moveOn->Enabled = false;
+		textBox1->Text = "\r\n" + "Кому-то очень сильно неповезло. Придётся отправиться в тюрьму. Если захочешь выбраться, то придётся либо выбросить дублю либо использовать карточку освобождения из тюрьмы";
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "electricity")
+	{
+		if (subStreets[0].owner == "monopoly")
+		{
+			std::string buffString = std::to_string(subStreets[0].cost) + "$";
+			textBox1->Text += "\r\n" + "\r\n" + "Состояние: Готова к продаже";
+			textBox1->Text += "\r\n" + "Стоимость покупки " + msclr::interop::marshal_as<System::String^>(buffString);
+			buy->Visible = true;
+			moveOn->Visible = true;
+		}
+		else
+		{
+			std::string buffString = subStreets[0].CheckOwner(users, subStreets[0]);
+			if (users[0].userName == buffString)
+			{
+				textBox1->Text += "\r\n" + "\r\n" + "Это твоя собственность" + "\r\n" + "Тебе ничего не надо платить";
+				moveOn->Visible = true;
+			}
+			else
+			{
+				textBox1->Text += "\r\n" + "\r\n" + "Владелец: " + msclr::interop::marshal_as<System::String^>(buffString);
+				buffString = std::to_string(subStreets[0].rent[0]) + "$";
+				if(subStreets[0].owner == subStreets[1].owner)
+					buffString = std::to_string(subStreets[0].rent[1]) + "$";
+				textBox1->Text += "\r\n" + "Вам придётся заплатить: " + msclr::interop::marshal_as<System::String^>(buffString);
+				moveOn->Visible = true;
+			}
+		}
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "waterSupply")
+	{
+		if (subStreets[1].owner == "monopoly")
+		{
+			std::string buffString = std::to_string(subStreets[1].cost) + "$";
+			textBox1->Text += "\r\n" + "\r\n" + "Состояние: Готова к продаже";
+			textBox1->Text += "\r\n" + "Стоимость покупки " + msclr::interop::marshal_as<System::String^>(buffString);
+			buy->Visible = true;
+			moveOn->Visible = true;
+		}
+		else
+		{
+			std::string buffString = subStreets[1].CheckOwner(users, subStreets[1]);
+			if (users[0].userName == buffString)
+			{
+				textBox1->Text += "\r\n" + "\r\n" + "Это твоя собственность" + "\r\n" + "Тебе ничего не надо платить";
+				moveOn->Visible = true;
+			}
+			else
+			{
+				textBox1->Text += "\r\n" + "\r\n" + "Владелец: " + msclr::interop::marshal_as<System::String^>(buffString);
+				buffString = std::to_string(subStreets[1].rent[0]) + "$";
+				if (subStreets[0].owner == subStreets[1].owner)
+					buffString = std::to_string(subStreets[0].rent[1]) + "$";
+				textBox1->Text += "\r\n" + "Вам придётся заплатить: " + msclr::interop::marshal_as<System::String^>(buffString);
+				moveOn->Visible = true;
+			}
+		}
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "start")
+	{
+		moveOn->Visible = true;
+		textBox1->Text = "\r\n" + "А вот и старт. Получай 200$ за то что ещё находишься в игре";
+	}
+
+
+
+
+
+	users[0].PlayersInfo(users, playersInfo);
+
+	rollDice->Enabled = false;
 }
 
 System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	if (chance[randomChance].GetCellToMove() != 0)
-	{
-		int moveOn = chance[randomChance].GetCellToMove() - users[0].GetCurrentPos();
-		if (chance[randomChance].GetCellToMove() < 0)
-			moveOn = chance[randomChance].GetCellToMove();
-		users[0].PlayersMoving(Player1, moveOn, board, Player1, Player2, Player3);
-	}
-	if (chance[randomChance].GetAddedCash() != 0)
-		users[0].SetCash(chance[randomChance].GetAddedCash());
+	toPerform->Visible = false;
+	moveOn->Enabled = true;
 
-	std::string buffString = std::to_string(users[0].GetCash()) + "$";
-	cash->Text = gcnew System::String(buffString.c_str());
-	buffString = std::to_string(users[0].GetCash() + users[0].streetMoney) + "$";
-	AllMoney->Text = gcnew System::String(buffString.c_str());
+	if (board[users[0].GetCurrentPos() - 1].definition == "chance")
+	{
+		if (chance[randomChance].GetCellToMove() != 0)
+		{
+			int moveOn = chance[randomChance].GetCellToMove() - users[0].GetCurrentPos();
+			if (chance[randomChance].GetCellToMove() < 0)
+				moveOn = chance[randomChance].GetCellToMove();
+			users[0].PlayersMoving(Player1, moveOn, board, Player1, Player2, Player3);
+		}
+		if (chance[randomChance].GetAddedCash() != 0)
+			users[0].SetCash(chance[randomChance].GetAddedCash());
+
+		std::string buffString = std::to_string(users[0].GetCash()) + "$";
+		cash->Text = gcnew System::String(buffString.c_str());
+		buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+		AllMoney->Text = gcnew System::String(buffString.c_str());
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "treasury")
+	{
+		if (treasury[randomTreasury].GetCellToMove() != 0)
+		{
+			int moveOn = treasury[randomTreasury].GetCellToMove() - users[0].GetCurrentPos();
+			users[0].PlayersMoving(Player1, moveOn, board, Player1, Player2, Player3);
+		}
+		if (treasury[randomTreasury].GetAddedCash() != 0)
+			users[0].SetCash(treasury[randomTreasury].GetAddedCash());
+
+		std::string buffString = std::to_string(users[0].GetCash()) + "$";
+		cash->Text = gcnew System::String(buffString.c_str());
+		buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+		AllMoney->Text = gcnew System::String(buffString.c_str());
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "tax")
+	{
+		users[0].SetCash(-100);
+
+		std::string buffString = std::to_string(users[0].GetCash()) + "$";
+		cash->Text = gcnew System::String(buffString.c_str());
+		buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+		AllMoney->Text = gcnew System::String(buffString.c_str());
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "superTax")
+	{
+		users[0].SetCash(-200);
+
+		std::string buffString = std::to_string(users[0].GetCash()) + "$";
+		cash->Text = gcnew System::String(buffString.c_str());
+		buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+		AllMoney->Text = gcnew System::String(buffString.c_str());
+	}
+
+
+
+
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "goToPrison")
+	{
+		users[0].SetArrested(true);
+		users[0].PlayersMoving(Player1, 20, board, Player1, Player2, Player3);
+	}
+
 
 	toPerform->Enabled = false;
 }
+
+System::Void GameForm::toPerform_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	toPerform->Image = Image::FromFile(Application::StartupPath + "\\assets\\toPerform_onMouseDown.png");
+}
+System::Void GameForm::toPerform_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	toPerform->Image = Image::FromFile(Application::StartupPath + "\\assets\\toPerform_onMouseUp.png");
+}
+System::Void GameForm::toPerform_MouseEnter(System::Object^ sender, System::EventArgs^ e)
+{
+	toPerform->Image = Image::FromFile(Application::StartupPath + "\\assets\\toPerform_onMouseEnter.png");
+}
+System::Void GameForm::toPerform_MouseLeave(System::Object^ sender, System::EventArgs^ e)
+{
+	toPerform->Image = Image::FromFile(Application::StartupPath + "\\assets\\toPerform_onMouseUp.png");
+}
+
+
+
+
 
 System::Void GameForm::rollDice_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
 {
@@ -387,7 +777,7 @@ System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ 
 	UserName->Text = gcnew System::String(users[0].userName.c_str()); //установка имени пользователя из объекта класса
 
 	//установка общего кол-ва денег пользователя из объекта класса
-	std::string buffString = std::to_string(users[0].GetCash() + users[0].streetMoney) + "$";
+	std::string buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
 	AllMoney->Text = gcnew System::String(buffString.c_str());
 
 	//установка наличных денег пользователя из объекта класса
@@ -395,7 +785,7 @@ System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ 
 	cash->Text = gcnew System::String(buffString.c_str());
 
 	//установка имени пользователя из объекта класса
-	buffString = std::to_string(users[0].streetMoney) + "$";
+	buffString = std::to_string(users[0].GetStreetMoney()) + "$";
 	streetMoney->Text = gcnew System::String(buffString.c_str());
 
 	srand(time(NULL));
@@ -456,6 +846,31 @@ System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ 
 		}
 		file2.close();
 	}
+
+	std::ifstream file3(msclr::interop::marshal_as<std::string>(Application::StartupPath) + "/treasury.txt");
+	if (file3.is_open())
+	{
+		for (int i = 0; i < 16; i++) //установка начальных значений каждой ячейки поля
+		{
+			int cellToMove;
+			int addedCash;
+			std::string a;
+
+			std::getline(file3, a);
+			file3 >> cellToMove;
+			file3.ignore(); // пропуск символа новой строки
+			file3 >> addedCash;
+			file3.ignore();
+
+			treasury[i].SetAction(a);
+			treasury[i].SetCellToMove(cellToMove);
+			treasury[i].SetAddedCash(addedCash);
+		}
+	}
+	file3.close();
+
+	subStreets[0].subStreetName = "electricity";
+	subStreets[1].subStreetName = "waterSupply";
 }
 
 System::Void GameForm::UnFocus(System::Object^ sender, System::EventArgs^ e)
@@ -502,5 +917,87 @@ System::Void GameForm::timer1_Tick(System::Object^ sender, System::EventArgs^ e)
 			streetMoney->Visible = true;
 		}
 	}
+}
+
+System::Void GameForm::buy_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	if (board[users[0].GetCurrentPos() - 1].definition == "street")
+	{
+		streets[streetIndex].owner = users[0].userName;
+		users[0].SetOwnStreet(streets[streetIndex]);
+		users[0].SetStreetMoney(streets[streetIndex].cost / 2);
+		users[0].SetCash(-streets[streetIndex].cost);
+		buy->Visible = false;
+		buy->Enabled = false;
+	}
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "electricity")
+	{
+		subStreets[0].owner = users[0].userName;
+		users[0].SetOwnSubStreet(subStreets[0]);
+		users[0].SetCash(-subStreets[0].cost);
+		buy->Visible = false;
+		buy->Enabled = false;
+	}
+
+	if (board[users[0].GetCurrentPos() - 1].definition == "waterSupply")
+	{
+		subStreets[1].owner = users[0].userName;
+		users[0].SetOwnSubStreet(subStreets[1]);
+		users[0].SetCash(-subStreets[1].cost);
+		buy->Visible = false;
+		buy->Enabled = false;
+	}
+
+	std::string buffString = std::to_string(users[0].GetCash()) + "$";
+	cash->Text = gcnew System::String(buffString.c_str());
+	buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+	AllMoney->Text = gcnew System::String(buffString.c_str());
+	buffString = std::to_string(users[0].GetStreetMoney()) + "$";
+	streetMoney->Text = gcnew System::String(buffString.c_str());
+}
+
+System::Void GameForm::buy_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	buy->Image = Image::FromFile(Application::StartupPath + "\\assets\\buy_onMouseDown.png");
+}
+System::Void GameForm::buy_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	buy->Image = Image::FromFile(Application::StartupPath + "\\assets\\buy_onMouseUp.png");
+}
+System::Void GameForm::buy_MouseEnter(System::Object^ sender, System::EventArgs^ e)
+{
+	buy->Image = Image::FromFile(Application::StartupPath + "\\assets\\buy_onMouseEnter.png");
+}
+System::Void GameForm::buy_MouseLeave(System::Object^ sender, System::EventArgs^ e)
+{
+	buy->Image = Image::FromFile(Application::StartupPath + "\\assets\\buy_onMouseUp.png");
+}
+
+
+
+System::Void GameForm::moveOn_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	moveOn->Visible = false;
+	moveOn->Enabled = false;
+	buy->Enabled = false;
+	rollDice->Enabled = true;
+}
+
+System::Void GameForm::moveOn_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	moveOn->Image = Image::FromFile(Application::StartupPath + "\\assets\\moveOn_onMouseDown.png");
+}
+System::Void GameForm::moveOn_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	moveOn->Image = Image::FromFile(Application::StartupPath + "\\assets\\moveOn_onMouseUp.png");
+}
+System::Void GameForm::moveOn_MouseEnter(System::Object^ sender, System::EventArgs^ e)
+{
+	moveOn->Image = Image::FromFile(Application::StartupPath + "\\assets\\moveOn_onMouseEnter.png");
+}
+System::Void GameForm::moveOn_MouseLeave(System::Object^ sender, System::EventArgs^ e)
+{
+	moveOn->Image = Image::FromFile(Application::StartupPath + "\\assets\\moveOn_onMouseUp.png");
 }
 

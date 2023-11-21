@@ -63,7 +63,7 @@ namespace monopoly {
 			{
 
 				Player3 = gcnew PictureBox();
-				Player3->Location = System::Drawing::Point(1450, 870);
+				Player3->Location = System::Drawing::Point(1450, 930);
 				Player3->Size = System::Drawing::Size(43, 42);
 				Player3->BackColor = Color::Transparent;
 				Player3->Image = Image::FromFile(Application::StartupPath + "\\assets\\playerColor3.png");
@@ -149,9 +149,22 @@ namespace monopoly {
 	public: System::Windows::Forms::TextBox^ cash;
 	public: System::Windows::Forms::TextBox^ streetMoney;
 public: System::Windows::Forms::TextBox^ showNameCurCell;
-public: System::Windows::Forms::TextBox^ textBox1;
+
 private: System::Windows::Forms::PictureBox^ persons;
 private: System::Windows::Forms::PictureBox^ toPerform;
+private: System::Windows::Forms::PictureBox^ buy;
+private: System::Windows::Forms::PictureBox^ moveOn;
+public: System::Windows::Forms::TextBox^ playersInfo;
+public: System::Windows::Forms::TextBox^ textBox1;
+private:
+
+private:
+
+private:
+
+private:
+
+
 public:
 
 public:
@@ -235,9 +248,12 @@ public:
 			this->cash = (gcnew System::Windows::Forms::TextBox());
 			this->streetMoney = (gcnew System::Windows::Forms::TextBox());
 			this->showNameCurCell = (gcnew System::Windows::Forms::TextBox());
-			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->persons = (gcnew System::Windows::Forms::PictureBox());
 			this->toPerform = (gcnew System::Windows::Forms::PictureBox());
+			this->buy = (gcnew System::Windows::Forms::PictureBox());
+			this->moveOn = (gcnew System::Windows::Forms::PictureBox());
+			this->playersInfo = (gcnew System::Windows::Forms::TextBox());
+			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->backToMenu))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_11))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_12))->BeginInit();
@@ -287,6 +303,8 @@ public:
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->fullBalance))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->persons))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->toPerform))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->buy))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->moveOn))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// backToMenu
@@ -889,28 +907,6 @@ public:
 			this->showNameCurCell->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->showNameCurCell->WordWrap = false;
 			// 
-			// textBox1
-			// 
-			this->textBox1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
-				static_cast<System::Int32>(static_cast<System::Byte>(179)));
-			this->textBox1->BorderStyle = System::Windows::Forms::BorderStyle::None;
-			this->textBox1->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(204)));
-			this->textBox1->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(97)), static_cast<System::Int32>(static_cast<System::Byte>(97)),
-				static_cast<System::Int32>(static_cast<System::Byte>(96)));
-			this->textBox1->ImeMode = System::Windows::Forms::ImeMode::NoControl;
-			this->textBox1->Location = System::Drawing::Point(1565, 249);
-			this->textBox1->MaxLength = 7;
-			this->textBox1->Multiline = true;
-			this->textBox1->Name = L"textBox1";
-			this->textBox1->ReadOnly = true;
-			this->textBox1->ShortcutsEnabled = false;
-			this->textBox1->Size = System::Drawing::Size(295, 429);
-			this->textBox1->TabIndex = 92;
-			this->textBox1->TabStop = false;
-			this->textBox1->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			this->textBox1->WordWrap = false;
-			// 
 			// persons
 			// 
 			this->persons->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom));
@@ -929,13 +925,92 @@ public:
 			// 
 			this->toPerform->BackColor = System::Drawing::Color::Transparent;
 			this->toPerform->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toPerform.Image")));
-			this->toPerform->Location = System::Drawing::Point(1573, 698);
+			this->toPerform->Location = System::Drawing::Point(1573, 638);
 			this->toPerform->Name = L"toPerform";
 			this->toPerform->Size = System::Drawing::Size(287, 53);
 			this->toPerform->TabIndex = 94;
 			this->toPerform->TabStop = false;
 			this->toPerform->Visible = false;
 			this->toPerform->Click += gcnew System::EventHandler(this, &GameForm::toPerform_Click);
+			this->toPerform->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::toPerform_MouseDown);
+			this->toPerform->MouseEnter += gcnew System::EventHandler(this, &GameForm::toPerform_MouseEnter);
+			this->toPerform->MouseLeave += gcnew System::EventHandler(this, &GameForm::toPerform_MouseLeave);
+			this->toPerform->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::toPerform_MouseUp);
+			// 
+			// buy
+			// 
+			this->buy->BackColor = System::Drawing::Color::Transparent;
+			this->buy->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"buy.Image")));
+			this->buy->Location = System::Drawing::Point(1573, 638);
+			this->buy->Name = L"buy";
+			this->buy->Size = System::Drawing::Size(287, 53);
+			this->buy->TabIndex = 95;
+			this->buy->TabStop = false;
+			this->buy->Visible = false;
+			this->buy->Click += gcnew System::EventHandler(this, &GameForm::buy_Click);
+			this->buy->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::buy_MouseDown);
+			this->buy->MouseEnter += gcnew System::EventHandler(this, &GameForm::buy_MouseEnter);
+			this->buy->MouseLeave += gcnew System::EventHandler(this, &GameForm::buy_MouseLeave);
+			this->buy->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::buy_MouseUp);
+			// 
+			// moveOn
+			// 
+			this->moveOn->BackColor = System::Drawing::Color::Transparent;
+			this->moveOn->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"moveOn.Image")));
+			this->moveOn->Location = System::Drawing::Point(1573, 693);
+			this->moveOn->Name = L"moveOn";
+			this->moveOn->Size = System::Drawing::Size(287, 53);
+			this->moveOn->TabIndex = 96;
+			this->moveOn->TabStop = false;
+			this->moveOn->Visible = false;
+			this->moveOn->Click += gcnew System::EventHandler(this, &GameForm::moveOn_Click);
+			this->moveOn->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::moveOn_MouseDown);
+			this->moveOn->MouseEnter += gcnew System::EventHandler(this, &GameForm::moveOn_MouseEnter);
+			this->moveOn->MouseLeave += gcnew System::EventHandler(this, &GameForm::moveOn_MouseLeave);
+			this->moveOn->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::moveOn_MouseUp);
+			// 
+			// playersInfo
+			// 
+			this->playersInfo->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(211)), static_cast<System::Int32>(static_cast<System::Byte>(84)),
+				static_cast<System::Int32>(static_cast<System::Byte>(89)));
+			this->playersInfo->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->playersInfo->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 30, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->playersInfo->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(211)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->playersInfo->ImeMode = System::Windows::Forms::ImeMode::NoControl;
+			this->playersInfo->Location = System::Drawing::Point(96, 711);
+			this->playersInfo->MaxLength = 7;
+			this->playersInfo->Multiline = true;
+			this->playersInfo->Name = L"playersInfo";
+			this->playersInfo->ReadOnly = true;
+			this->playersInfo->ShortcutsEnabled = false;
+			this->playersInfo->Size = System::Drawing::Size(350, 136);
+			this->playersInfo->TabIndex = 97;
+			this->playersInfo->TabStop = false;
+			this->playersInfo->WordWrap = false;
+			// 
+			// textBox1
+			// 
+			this->textBox1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->textBox1->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->textBox1->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->textBox1->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(97)), static_cast<System::Int32>(static_cast<System::Byte>(97)),
+				static_cast<System::Int32>(static_cast<System::Byte>(96)));
+			this->textBox1->ImeMode = System::Windows::Forms::ImeMode::NoControl;
+			this->textBox1->Location = System::Drawing::Point(1565, 249);
+			this->textBox1->MaxLength = 7;
+			this->textBox1->Multiline = true;
+			this->textBox1->Name = L"textBox1";
+			this->textBox1->ReadOnly = true;
+			this->textBox1->ShortcutsEnabled = false;
+			this->textBox1->Size = System::Drawing::Size(295, 388);
+			this->textBox1->TabIndex = 92;
+			this->textBox1->TabStop = false;
+			this->textBox1->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textBox1->WordWrap = false;
 			// 
 			// GameForm
 			// 
@@ -946,6 +1021,9 @@ public:
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
 			this->ClientSize = System::Drawing::Size(1904, 1041);
+			this->Controls->Add(this->playersInfo);
+			this->Controls->Add(this->moveOn);
+			this->Controls->Add(this->buy);
 			this->Controls->Add(this->toPerform);
 			this->Controls->Add(this->showNameCurCell);
 			this->Controls->Add(this->textBox1);
@@ -1056,6 +1134,8 @@ public:
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->fullBalance))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->persons))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->toPerform))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->buy))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->moveOn))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -1082,12 +1162,32 @@ public:
 	private: System::Void showFullBalance_Click(System::Object^ sender, System::EventArgs^ e);
 
 	private: System::Void timer1_Tick(System::Object^ sender, System::EventArgs^ e);
+
 	private: System::Void toPerform_Click(System::Object^ sender, System::EventArgs^ e);
+
+	private: System::Void buy_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void moveOn_Click(System::Object^ sender, System::EventArgs^ e);
+
+	private: System::Void moveOn_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void moveOn_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void moveOn_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void moveOn_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+
+	private: System::Void buy_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void buy_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void buy_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void buy_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+
+private: System::Void toPerform_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void toPerform_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void toPerform_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+private: System::Void toPerform_MouseLeave(System::Object^ sender, System::EventArgs^ e);
 };
 }
 
 class Player;
 class Street;
+class SubStreet;
 
 class Cell
 {
@@ -1108,13 +1208,18 @@ private:
 	int currentPos;
 	int cash;
 	bool arrested;
+	int streetMoney;
 public:
 	Player();
 	std::vector<Street> ownStreet;
 	void SetOwnStreet(Street street);
+	std::vector<SubStreet> ownSubStreet;
+	void SetOwnSubStreet(SubStreet subStreet);
+
+	int GetStreetMoney();
+	void SetStreetMoney(int streetMoney);
 
 	std::string userName;
-	int streetMoney;
 	static int playersNum;
 
 	int GetCurrentPos();
@@ -1126,7 +1231,23 @@ public:
 	bool GetArrested();
 	void SetArrested(bool arrested);
 
-	void PlayersMoving(System::Windows::Forms::PictureBox^ player, int dice, Cell board[], System::Windows::Forms::PictureBox^ player1, System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3);
+	bool PlayersMoving(System::Windows::Forms::PictureBox^ player, int dice, Cell board[], System::Windows::Forms::PictureBox^ player1, System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3);
+	void PlayersInfo(Player users[], System::Windows::Forms::TextBox^ textBox)
+	{
+		textBox->Text = "";
+		std::vector<Player> onlinePlayers;
+		for (int i = 0; i < Player::playersNum; i++)
+			if(users[i].userName != this->userName)
+				onlinePlayers.push_back(users[i]);
+		if (Player::playersNum > 1)
+		{
+			for (int i = 0; i < onlinePlayers.size(); i++)
+			{
+				std::string buffString = std::to_string(onlinePlayers[i].GetCash()) + "$";
+				textBox->Text += msclr::interop::marshal_as<System::String^>(onlinePlayers[i].userName) + ":" + msclr::interop::marshal_as<System::String^>(buffString) + "\r\n";
+			}
+		}
+	}
 };
 
 class Street
@@ -1138,19 +1259,19 @@ public:
 	std::string owner;
 	int buildCost;
 	int cost;
-	std::string CheckOwner(Player users[], Street street)
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			for (int j = 0; j < users[i].ownStreet.size(); i++)
-			{
-				if (users[i].ownStreet[j].streetName == street.streetName)
-				{
-					return users[i].userName;
-				}
-			}
-		}
-	}
+	int housesCount;
+	std::string CheckOwner(Player users[], Street street);
+};
+
+class SubStreet
+{
+public:
+	SubStreet();
+	std::string subStreetName;
+	int rent[2];
+	std::string owner;
+	int cost;
+	std::string CheckOwner(Player users[], SubStreet street);
 };
 
 class Chance
@@ -1169,6 +1290,20 @@ public:
 	void SetAddedCash(int addedCash);
 };
 
+class Treasury
+{
+	std::string action;
+	int cellToMove;
+	int addedCash;
+public:
+	std::string GetAction();
+	void SetAction(std::string action);
 
+	int GetCellToMove();
+	void SetCellToMove(int cellToMove);
+
+	int GetAddedCash();
+	void SetAddedCash(int addedCash);
+};
 
 extern Player* users;

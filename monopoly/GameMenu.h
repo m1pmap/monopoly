@@ -151,6 +151,10 @@ namespace monopoly {
 			this->arrowRight->TabIndex = 4;
 			this->arrowRight->TabStop = false;
 			this->arrowRight->Click += gcnew System::EventHandler(this, &GameMenu::arrowRight_Click);
+			this->arrowRight->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameMenu::arrowRight_MouseDown);
+			this->arrowRight->MouseEnter += gcnew System::EventHandler(this, &GameMenu::arrowRight_MouseEnter);
+			this->arrowRight->MouseLeave += gcnew System::EventHandler(this, &GameMenu::arrowRight_MouseLeave);
+			this->arrowRight->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameMenu::arrowRight_MouseUp);
 			// 
 			// arrowLeft
 			// 
@@ -163,6 +167,10 @@ namespace monopoly {
 			this->arrowLeft->TabStop = false;
 			this->arrowLeft->Visible = false;
 			this->arrowLeft->Click += gcnew System::EventHandler(this, &GameMenu::arrowLeft_Click);
+			this->arrowLeft->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameMenu::arrowLeft_MouseDown);
+			this->arrowLeft->MouseEnter += gcnew System::EventHandler(this, &GameMenu::arrowLeft_MouseEnter);
+			this->arrowLeft->MouseLeave += gcnew System::EventHandler(this, &GameMenu::arrowLeft_MouseLeave);
+			this->arrowLeft->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameMenu::arrowLeft_MouseUp);
 			// 
 			// timer1
 			// 
@@ -216,6 +224,10 @@ namespace monopoly {
 			this->changeName->TabStop = false;
 			this->changeName->Visible = false;
 			this->changeName->Click += gcnew System::EventHandler(this, &GameMenu::changeName_Click);
+			this->changeName->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameMenu::changeName_MouseDown);
+			this->changeName->MouseEnter += gcnew System::EventHandler(this, &GameMenu::changeName_MouseEnter);
+			this->changeName->MouseLeave += gcnew System::EventHandler(this, &GameMenu::changeName_MouseLeave);
+			this->changeName->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameMenu::changeName_MouseUp);
 			// 
 			// UserName
 			// 
@@ -306,5 +318,19 @@ private: System::Void arrowPrev_Click(System::Object^ sender, System::EventArgs^
 private: System::Void Unfocus(System::Object^ sender, System::EventArgs^ e);
 
 private: System::Void changeName_Click(System::Object^ sender, System::EventArgs^ e);
+private: System::Void changeName_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void changeName_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void changeName_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+private: System::Void changeName_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+
+private: System::Void arrowRight_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void arrowRight_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void arrowRight_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+private: System::Void arrowRight_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+
+private: System::Void arrowLeft_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void arrowLeft_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+private: System::Void arrowLeft_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+private: System::Void arrowLeft_MouseLeave(System::Object^ sender, System::EventArgs^ e);
 };
 }

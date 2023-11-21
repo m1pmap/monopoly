@@ -74,6 +74,23 @@ System::Void GameMenu::arrowRight_Click(System::Object^ sender, System::EventArg
 	arrowBool = false;
 }
 
+System::Void GameMenu::arrowRight_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	arrowRight->Image = Image::FromFile(Application::StartupPath + "\\assets\\arrowRight_onMouseDown.png");
+}
+System::Void GameMenu::arrowRight_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	arrowRight->Image = Image::FromFile(Application::StartupPath + "\\assets\\arrowRight.png");
+}
+System::Void GameMenu::arrowRight_MouseEnter(System::Object^ sender, System::EventArgs^ e)
+{
+	arrowRight->Image = Image::FromFile(Application::StartupPath + "\\assets\\arrowRight_onMouseEnter.png");
+}
+System::Void GameMenu::arrowRight_MouseLeave(System::Object^ sender, System::EventArgs^ e)
+{
+	arrowRight->Image = Image::FromFile(Application::StartupPath + "\\assets\\arrowRight.png");
+}
+
 System::Void GameMenu::timer1_Tick(System::Object^ sender, System::EventArgs^ e)
 {
 	if (!arrowBool) //проверка булевой переменной(true - анимация влево, false - анимация вправо) 
@@ -115,6 +132,23 @@ System::Void GameMenu::arrowLeft_Click(System::Object^ sender, System::EventArgs
 	changeName->Visible = false;
 	timer1->Start();	//запуск таймера и анимации
 	arrowBool = true;
+}
+
+System::Void GameMenu::arrowLeft_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	arrowLeft->Image = Image::FromFile(Application::StartupPath + "\\assets\\arrowLeft_onMouseDown.png");
+}
+System::Void GameMenu::arrowLeft_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	arrowLeft->Image = Image::FromFile(Application::StartupPath + "\\assets\\arrowLeft.png");
+}
+System::Void GameMenu::arrowLeft_MouseEnter(System::Object^ sender, System::EventArgs^ e)
+{
+	arrowLeft->Image = Image::FromFile(Application::StartupPath + "\\assets\\arrowLeft_onMouseEnter.png");
+}
+System::Void GameMenu::arrowLeft_MouseLeave(System::Object^ sender, System::EventArgs^ e)
+{
+	arrowLeft->Image = Image::FromFile(Application::StartupPath + "\\assets\\arrowLeft.png");
 }
 
 System::Void GameMenu::arrowNext_Click(System::Object^ sender, System::EventArgs^ e)
@@ -163,6 +197,39 @@ System::Void GameMenu::changeName_Click(System::Object^ sender, System::EventArg
 		changeNameBool = true;	//изменение на противоположное значение
 	}
 }
+
+System::Void GameMenu::changeName_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	if (changeNameBool)
+		changeName->Image = Image::FromFile(Application::StartupPath + "\\assets\\changeName_onMouseDown.png");
+	else
+		changeName->Image = Image::FromFile(Application::StartupPath + "\\assets\\save_onMouseDown.png");
+}
+
+System::Void GameMenu::changeName_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	if (changeNameBool)
+		changeName->Image = Image::FromFile(Application::StartupPath + "\\assets\\changeName_onMouseUp.png");
+	else
+		changeName->Image = Image::FromFile(Application::StartupPath + "\\assets\\save_onMouseUp.png");
+}
+
+System::Void GameMenu::changeName_MouseEnter(System::Object^ sender, System::EventArgs^ e)
+{
+	if (changeNameBool)
+		changeName->Image = Image::FromFile(Application::StartupPath + "\\assets\\changeName_onMouseEnter.png");
+	else
+		changeName->Image = Image::FromFile(Application::StartupPath + "\\assets\\save_onMouseEnter.png");
+}
+
+System::Void GameMenu::changeName_MouseLeave(System::Object^ sender, System::EventArgs^ e)
+{
+	if (changeNameBool)
+		changeName->Image = Image::FromFile(Application::StartupPath + "\\assets\\changeName_onMouseUp.png");
+	else
+		changeName->Image = Image::FromFile(Application::StartupPath + "\\assets\\save_onMouseUp.png");
+}
+
 
 
 
