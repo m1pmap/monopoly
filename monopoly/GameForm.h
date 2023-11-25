@@ -2,6 +2,9 @@
 #include "GameMenu.h"
 #include <string>
 #include <msclr/marshal_cppstd.h>
+#include <chrono>
+#include <fstream>
+#include <locale.h>
 
 namespace monopoly {
 
@@ -156,6 +159,31 @@ private: System::Windows::Forms::PictureBox^ buy;
 private: System::Windows::Forms::PictureBox^ moveOn;
 public: System::Windows::Forms::TextBox^ playersInfo;
 public: System::Windows::Forms::TextBox^ textBox1;
+
+
+private: System::Windows::Forms::PictureBox^ roll;
+private: System::Windows::Forms::PictureBox^ useCard;
+private: System::Windows::Forms::PictureBox^ saleButton;
+
+private: System::Windows::Forms::Timer^ timer2;
+private: System::Windows::Forms::Timer^ timer3;
+private: System::Windows::Forms::PictureBox^ saleStreets;
+public: System::Windows::Forms::TextBox^ streetNameForSale;
+private: System::Windows::Forms::PictureBox^ sale;
+public:
+
+private: System::Windows::Forms::PictureBox^ notSale;
+
+
+
+public:
+private:
+
+private:
+
+
+
+public:
 private:
 
 private:
@@ -254,6 +282,15 @@ public:
 			this->moveOn = (gcnew System::Windows::Forms::PictureBox());
 			this->playersInfo = (gcnew System::Windows::Forms::TextBox());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+			this->roll = (gcnew System::Windows::Forms::PictureBox());
+			this->useCard = (gcnew System::Windows::Forms::PictureBox());
+			this->saleButton = (gcnew System::Windows::Forms::PictureBox());
+			this->timer2 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->timer3 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->saleStreets = (gcnew System::Windows::Forms::PictureBox());
+			this->streetNameForSale = (gcnew System::Windows::Forms::TextBox());
+			this->sale = (gcnew System::Windows::Forms::PictureBox());
+			this->notSale = (gcnew System::Windows::Forms::PictureBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->backToMenu))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_11))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_12))->BeginInit();
@@ -305,6 +342,12 @@ public:
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->toPerform))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->buy))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->moveOn))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->roll))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->useCard))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->saleButton))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->saleStreets))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->sale))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->notSale))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// backToMenu
@@ -794,6 +837,7 @@ public:
 			this->AllMoney->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
 				static_cast<System::Int32>(static_cast<System::Byte>(179)));
 			this->AllMoney->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->AllMoney->Cursor = System::Windows::Forms::Cursors::Default;
 			this->AllMoney->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 45, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
 			this->AllMoney->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(48)), static_cast<System::Int32>(static_cast<System::Byte>(79)),
@@ -809,6 +853,7 @@ public:
 			this->AllMoney->TabStop = false;
 			this->AllMoney->Text = L"0.000$";
 			this->AllMoney->WordWrap = false;
+			this->AllMoney->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::UnFocusOnMouseDown);
 			// 
 			// showFullBalance
 			// 
@@ -841,6 +886,7 @@ public:
 			this->cash->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
 				static_cast<System::Int32>(static_cast<System::Byte>(179)));
 			this->cash->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->cash->Cursor = System::Windows::Forms::Cursors::Default;
 			this->cash->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 25, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
 			this->cash->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(48)), static_cast<System::Int32>(static_cast<System::Byte>(79)),
@@ -857,14 +903,14 @@ public:
 			this->cash->Text = L"0.000$";
 			this->cash->Visible = false;
 			this->cash->WordWrap = false;
-			this->cash->MouseEnter += gcnew System::EventHandler(this, &GameForm::UnFocus);
-			this->cash->MouseLeave += gcnew System::EventHandler(this, &GameForm::UnFocus);
+			this->cash->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::UnFocusOnMouseDown);
 			// 
 			// streetMoney
 			// 
 			this->streetMoney->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
 				static_cast<System::Int32>(static_cast<System::Byte>(179)));
 			this->streetMoney->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->streetMoney->Cursor = System::Windows::Forms::Cursors::Default;
 			this->streetMoney->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 25, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
 			this->streetMoney->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(48)), static_cast<System::Int32>(static_cast<System::Byte>(79)),
@@ -881,14 +927,14 @@ public:
 			this->streetMoney->Text = L"0.000$";
 			this->streetMoney->Visible = false;
 			this->streetMoney->WordWrap = false;
-			this->streetMoney->MouseEnter += gcnew System::EventHandler(this, &GameForm::UnFocus);
-			this->streetMoney->MouseLeave += gcnew System::EventHandler(this, &GameForm::UnFocus);
+			this->streetMoney->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::UnFocusOnMouseDown);
 			// 
 			// showNameCurCell
 			// 
 			this->showNameCurCell->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
 				static_cast<System::Int32>(static_cast<System::Byte>(179)));
 			this->showNameCurCell->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->showNameCurCell->Cursor = System::Windows::Forms::Cursors::Default;
 			this->showNameCurCell->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
 			this->showNameCurCell->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(97)), static_cast<System::Int32>(static_cast<System::Byte>(97)),
@@ -906,6 +952,7 @@ public:
 			this->showNameCurCell->Text = L"Добро пожаловать в\r\nМонополию";
 			this->showNameCurCell->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->showNameCurCell->WordWrap = false;
+			this->showNameCurCell->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::UnFocusOnMouseDown);
 			// 
 			// persons
 			// 
@@ -974,6 +1021,7 @@ public:
 			this->playersInfo->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(211)), static_cast<System::Int32>(static_cast<System::Byte>(84)),
 				static_cast<System::Int32>(static_cast<System::Byte>(89)));
 			this->playersInfo->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->playersInfo->Cursor = System::Windows::Forms::Cursors::Default;
 			this->playersInfo->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 30, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
 			this->playersInfo->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(211)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
@@ -989,12 +1037,14 @@ public:
 			this->playersInfo->TabIndex = 97;
 			this->playersInfo->TabStop = false;
 			this->playersInfo->WordWrap = false;
+			this->playersInfo->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::UnFocusOnMouseDown);
 			// 
 			// textBox1
 			// 
 			this->textBox1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
 				static_cast<System::Int32>(static_cast<System::Byte>(179)));
 			this->textBox1->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->textBox1->Cursor = System::Windows::Forms::Cursors::Default;
 			this->textBox1->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
 			this->textBox1->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(97)), static_cast<System::Int32>(static_cast<System::Byte>(97)),
@@ -1011,6 +1061,111 @@ public:
 			this->textBox1->TabStop = false;
 			this->textBox1->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->textBox1->WordWrap = false;
+			this->textBox1->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::UnFocusOnMouseDown);
+			// 
+			// roll
+			// 
+			this->roll->BackColor = System::Drawing::Color::Transparent;
+			this->roll->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"roll.Image")));
+			this->roll->Location = System::Drawing::Point(1573, 638);
+			this->roll->Name = L"roll";
+			this->roll->Size = System::Drawing::Size(287, 53);
+			this->roll->TabIndex = 98;
+			this->roll->TabStop = false;
+			this->roll->Visible = false;
+			this->roll->Click += gcnew System::EventHandler(this, &GameForm::roll_Click);
+			// 
+			// useCard
+			// 
+			this->useCard->BackColor = System::Drawing::Color::Transparent;
+			this->useCard->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"useCard.Image")));
+			this->useCard->Location = System::Drawing::Point(1573, 583);
+			this->useCard->Name = L"useCard";
+			this->useCard->Size = System::Drawing::Size(287, 53);
+			this->useCard->TabIndex = 99;
+			this->useCard->TabStop = false;
+			this->useCard->Visible = false;
+			this->useCard->Click += gcnew System::EventHandler(this, &GameForm::useCard_Click);
+			// 
+			// saleButton
+			// 
+			this->saleButton->BackColor = System::Drawing::Color::Transparent;
+			this->saleButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"saleButton.Image")));
+			this->saleButton->Location = System::Drawing::Point(68, 558);
+			this->saleButton->Name = L"saleButton";
+			this->saleButton->Size = System::Drawing::Size(404, 89);
+			this->saleButton->TabIndex = 100;
+			this->saleButton->TabStop = false;
+			this->saleButton->Click += gcnew System::EventHandler(this, &GameForm::saleButton_Click);
+			// 
+			// timer2
+			// 
+			this->timer2->Interval = 9;
+			this->timer2->Tick += gcnew System::EventHandler(this, &GameForm::timer2_Tick);
+			// 
+			// timer3
+			// 
+			this->timer3->Interval = 9;
+			this->timer3->Tick += gcnew System::EventHandler(this, &GameForm::timer3_Tick);
+			// 
+			// saleStreets
+			// 
+			this->saleStreets->BackColor = System::Drawing::Color::Transparent;
+			this->saleStreets->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"saleStreets.Image")));
+			this->saleStreets->Location = System::Drawing::Point(-400, 473);
+			this->saleStreets->Name = L"saleStreets";
+			this->saleStreets->Size = System::Drawing::Size(404, 174);
+			this->saleStreets->TabIndex = 101;
+			this->saleStreets->TabStop = false;
+			// 
+			// streetNameForSale
+			// 
+			this->streetNameForSale->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)),
+				static_cast<System::Int32>(static_cast<System::Byte>(222)), static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->streetNameForSale->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->streetNameForSale->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->streetNameForSale->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(49)),
+				static_cast<System::Int32>(static_cast<System::Byte>(20)), static_cast<System::Int32>(static_cast<System::Byte>(53)));
+			this->streetNameForSale->ImeMode = System::Windows::Forms::ImeMode::NoControl;
+			this->streetNameForSale->Location = System::Drawing::Point(120, 530);
+			this->streetNameForSale->MaxLength = 7;
+			this->streetNameForSale->Name = L"streetNameForSale";
+			this->streetNameForSale->ReadOnly = true;
+			this->streetNameForSale->ShortcutsEnabled = false;
+			this->streetNameForSale->Size = System::Drawing::Size(298, 23);
+			this->streetNameForSale->TabIndex = 102;
+			this->streetNameForSale->TabStop = false;
+			this->streetNameForSale->Text = L"Название вашей улицы для продажи";
+			this->streetNameForSale->Visible = false;
+			this->streetNameForSale->WordWrap = false;
+			this->streetNameForSale->MouseEnter += gcnew System::EventHandler(this, &GameForm::UnFocus);
+			this->streetNameForSale->MouseLeave += gcnew System::EventHandler(this, &GameForm::UnFocus);
+			// 
+			// sale
+			// 
+			this->sale->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->sale->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"sale.Image")));
+			this->sale->Location = System::Drawing::Point(213, 574);
+			this->sale->Name = L"sale";
+			this->sale->Size = System::Drawing::Size(238, 54);
+			this->sale->TabIndex = 103;
+			this->sale->TabStop = false;
+			this->sale->Visible = false;
+			// 
+			// notSale
+			// 
+			this->notSale->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->notSale->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"notSale.Image")));
+			this->notSale->Location = System::Drawing::Point(92, 573);
+			this->notSale->Name = L"notSale";
+			this->notSale->Size = System::Drawing::Size(110, 54);
+			this->notSale->TabIndex = 104;
+			this->notSale->TabStop = false;
+			this->notSale->Visible = false;
+			this->notSale->Click += gcnew System::EventHandler(this, &GameForm::notSale_Click);
 			// 
 			// GameForm
 			// 
@@ -1021,6 +1176,13 @@ public:
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
 			this->ClientSize = System::Drawing::Size(1904, 1041);
+			this->Controls->Add(this->streetNameForSale);
+			this->Controls->Add(this->notSale);
+			this->Controls->Add(this->sale);
+			this->Controls->Add(this->saleStreets);
+			this->Controls->Add(this->saleButton);
+			this->Controls->Add(this->useCard);
+			this->Controls->Add(this->roll);
 			this->Controls->Add(this->playersInfo);
 			this->Controls->Add(this->moveOn);
 			this->Controls->Add(this->buy);
@@ -1085,6 +1247,7 @@ public:
 			this->Text = L"GameForm";
 			this->WindowState = System::Windows::Forms::FormWindowState::Maximized;
 			this->Load += gcnew System::EventHandler(this, &GameForm::GameForm_Load);
+			this->MouseEnter += gcnew System::EventHandler(this, &GameForm::GameForm_MouseEnter);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->backToMenu))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_11))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_12))->EndInit();
@@ -1136,6 +1299,12 @@ public:
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->toPerform))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->buy))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->moveOn))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->roll))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->useCard))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->saleButton))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->saleStreets))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->sale))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->notSale))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -1178,10 +1347,23 @@ public:
 	private: System::Void buy_MouseEnter(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void buy_MouseLeave(System::Object^ sender, System::EventArgs^ e);
 
-private: System::Void toPerform_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
-private: System::Void toPerform_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
-private: System::Void toPerform_MouseEnter(System::Object^ sender, System::EventArgs^ e);
-private: System::Void toPerform_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void toPerform_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void toPerform_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void toPerform_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void toPerform_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+
+	private: System::Void GameForm_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+
+	private: System::Void roll_Click(System::Object^ sender, System::EventArgs^ e);
+
+	private: System::Void useCard_Click(System::Object^ sender, System::EventArgs^ e);
+
+	private: System::Void saleButton_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void timer2_Tick(System::Object^ sender, System::EventArgs^ e);
+
+	private: System::Void notSale_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void timer3_Tick(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void UnFocusOnMouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
 };
 }
 
@@ -1209,6 +1391,7 @@ private:
 	int cash;
 	bool arrested;
 	int streetMoney;
+	bool prisonCard;
 public:
 	Player();
 	std::vector<Street> ownStreet;
@@ -1232,22 +1415,11 @@ public:
 	void SetArrested(bool arrested);
 
 	bool PlayersMoving(System::Windows::Forms::PictureBox^ player, int dice, Cell board[], System::Windows::Forms::PictureBox^ player1, System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3);
-	void PlayersInfo(Player users[], System::Windows::Forms::TextBox^ textBox)
-	{
-		textBox->Text = "";
-		std::vector<Player> onlinePlayers;
-		for (int i = 0; i < Player::playersNum; i++)
-			if(users[i].userName != this->userName)
-				onlinePlayers.push_back(users[i]);
-		if (Player::playersNum > 1)
-		{
-			for (int i = 0; i < onlinePlayers.size(); i++)
-			{
-				std::string buffString = std::to_string(onlinePlayers[i].GetCash()) + "$";
-				textBox->Text += msclr::interop::marshal_as<System::String^>(onlinePlayers[i].userName) + ":" + msclr::interop::marshal_as<System::String^>(buffString) + "\r\n";
-			}
-		}
-	}
+	void PlayersInfo(Player users[], System::Windows::Forms::TextBox^ textBox);
+
+	bool GetPrisonCard();
+	void SetPrisonCard(bool arrested);
+
 };
 
 class Street

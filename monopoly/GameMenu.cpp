@@ -16,7 +16,7 @@ int main(array<String^>^ args)
 	Application::Run(% form1);
 }
 
-int Player::playersNum = 2;
+int Player::playersNum = 3;
 
 bool arrowBool = true;
 int currentImageIndex = 0;
