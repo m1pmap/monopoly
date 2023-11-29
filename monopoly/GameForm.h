@@ -830,7 +830,7 @@ public:
 			this->UserName->TabStop = false;
 			this->UserName->Text = L"YourName";
 			this->UserName->WordWrap = false;
-			this->UserName->MouseLeave += gcnew System::EventHandler(this, &GameForm::UnFocus);
+			this->UserName->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::UnFocusOnMouseDown);
 			// 
 			// AllMoney
 			// 
@@ -1074,6 +1074,10 @@ public:
 			this->roll->TabStop = false;
 			this->roll->Visible = false;
 			this->roll->Click += gcnew System::EventHandler(this, &GameForm::roll_Click);
+			this->roll->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::roll_MouseDown);
+			this->roll->MouseEnter += gcnew System::EventHandler(this, &GameForm::roll_MouseEnter);
+			this->roll->MouseLeave += gcnew System::EventHandler(this, &GameForm::roll_MouseLeave);
+			this->roll->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::roll_MouseUp);
 			// 
 			// useCard
 			// 
@@ -1086,6 +1090,10 @@ public:
 			this->useCard->TabStop = false;
 			this->useCard->Visible = false;
 			this->useCard->Click += gcnew System::EventHandler(this, &GameForm::useCard_Click);
+			this->useCard->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::useCard_MouseDown);
+			this->useCard->MouseEnter += gcnew System::EventHandler(this, &GameForm::useCard_MouseEnter);
+			this->useCard->MouseLeave += gcnew System::EventHandler(this, &GameForm::useCard_MouseLeave);
+			this->useCard->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::useCard_MouseUp);
 			// 
 			// saleButton
 			// 
@@ -1097,6 +1105,10 @@ public:
 			this->saleButton->TabIndex = 100;
 			this->saleButton->TabStop = false;
 			this->saleButton->Click += gcnew System::EventHandler(this, &GameForm::saleButton_Click);
+			this->saleButton->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::saleButton_MouseDown);
+			this->saleButton->MouseEnter += gcnew System::EventHandler(this, &GameForm::saleButton_MouseEnter);
+			this->saleButton->MouseLeave += gcnew System::EventHandler(this, &GameForm::saleButton_MouseLeave);
+			this->saleButton->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::saleButton_MouseUp);
 			// 
 			// timer2
 			// 
@@ -1129,16 +1141,17 @@ public:
 				static_cast<System::Int32>(static_cast<System::Byte>(20)), static_cast<System::Int32>(static_cast<System::Byte>(53)));
 			this->streetNameForSale->ImeMode = System::Windows::Forms::ImeMode::NoControl;
 			this->streetNameForSale->Location = System::Drawing::Point(120, 530);
-			this->streetNameForSale->MaxLength = 7;
+			this->streetNameForSale->MaxLength = 40;
 			this->streetNameForSale->Name = L"streetNameForSale";
-			this->streetNameForSale->ReadOnly = true;
 			this->streetNameForSale->ShortcutsEnabled = false;
 			this->streetNameForSale->Size = System::Drawing::Size(298, 23);
 			this->streetNameForSale->TabIndex = 102;
 			this->streetNameForSale->TabStop = false;
 			this->streetNameForSale->Text = L"Название вашей улицы для продажи";
+			this->streetNameForSale->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->streetNameForSale->Visible = false;
 			this->streetNameForSale->WordWrap = false;
+			this->streetNameForSale->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::streetNameForSale_MouseDown);
 			this->streetNameForSale->MouseEnter += gcnew System::EventHandler(this, &GameForm::UnFocus);
 			this->streetNameForSale->MouseLeave += gcnew System::EventHandler(this, &GameForm::UnFocus);
 			// 
@@ -1153,6 +1166,11 @@ public:
 			this->sale->TabIndex = 103;
 			this->sale->TabStop = false;
 			this->sale->Visible = false;
+			this->sale->Click += gcnew System::EventHandler(this, &GameForm::sale_Click);
+			this->sale->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::sale_MouseDown);
+			this->sale->MouseEnter += gcnew System::EventHandler(this, &GameForm::sale_MouseEnter);
+			this->sale->MouseLeave += gcnew System::EventHandler(this, &GameForm::sale_MouseLeave);
+			this->sale->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::sale_MouseUp);
 			// 
 			// notSale
 			// 
@@ -1166,6 +1184,10 @@ public:
 			this->notSale->TabStop = false;
 			this->notSale->Visible = false;
 			this->notSale->Click += gcnew System::EventHandler(this, &GameForm::notSale_Click);
+			this->notSale->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::notSale_MouseDown);
+			this->notSale->MouseEnter += gcnew System::EventHandler(this, &GameForm::notSale_MouseEnter);
+			this->notSale->MouseLeave += gcnew System::EventHandler(this, &GameForm::notSale_MouseLeave);
+			this->notSale->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::notSale_MouseUp);
 			// 
 			// GameForm
 			// 
@@ -1355,15 +1377,41 @@ public:
 	private: System::Void GameForm_MouseEnter(System::Object^ sender, System::EventArgs^ e);
 
 	private: System::Void roll_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void roll_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void roll_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void roll_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void roll_MouseLeave(System::Object^ sender, System::EventArgs^ e);
 
 	private: System::Void useCard_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void useCard_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void useCard_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void useCard_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void useCard_MouseLeave(System::Object^ sender, System::EventArgs^ e);
 
 	private: System::Void saleButton_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void saleButton_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void saleButton_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void saleButton_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void saleButton_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+
 	private: System::Void timer2_Tick(System::Object^ sender, System::EventArgs^ e);
 
 	private: System::Void notSale_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void timer3_Tick(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void UnFocusOnMouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+
+	private: System::Void notSale_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void notSale_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void notSale_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void notSale_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+
+	private: System::Void sale_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void sale_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void sale_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void sale_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void sale_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+
+	private: System::Void streetNameForSale_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
 };
 }
 
@@ -1385,8 +1433,21 @@ public:
 	void MoveOnCell(System::Windows::Forms::PictureBox^ player1, System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3);
 };
 
+class Street
+{
+public:
+	Street();
+	std::string streetName;
+	int rent[6];
+	std::string owner;
+	int buildCost;
+	int cost;
+	int housesCount;
+	std::string CheckOwner(Player users[], Street street);
+};
+
 class Player {
-private: 
+private:
 	int currentPos;
 	int cash;
 	bool arrested;
@@ -1420,19 +1481,20 @@ public:
 	bool GetPrisonCard();
 	void SetPrisonCard(bool arrested);
 
-};
+	bool SellStreet(std::string streetForSell)
+	{
+		for (int i = 0; i < this->ownStreet.size(); ++i)
+		{
+			if (this->ownStreet[i].streetName == streetForSell)
+			{
+				ownStreet.erase(this->ownStreet.begin() + i);
+				--i;
+				return true;
+			}
+		}
+		return false;
+	}
 
-class Street
-{
-public:
-	Street();
-	std::string streetName;
-	int rent[6];
-	std::string owner;
-	int buildCost;
-	int cost;
-	int housesCount;
-	std::string CheckOwner(Player users[], Street street);
 };
 
 class SubStreet
