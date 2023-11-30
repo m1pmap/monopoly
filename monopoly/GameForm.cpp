@@ -16,6 +16,8 @@ Player::Player() //конструктор класса Player, который устанавливает начальные зн
 	prisonCard = false;
 }
 
+int curPlayerIndex = 0;
+
 Player* users = new Player[Player::playersNum]; //создание массива с пользователями
 
 Cell board[40]; //массив ячеек поля
@@ -64,6 +66,10 @@ bool Player::PlayersMoving(System::Windows::Forms::PictureBox^ player, //метод, 
 			System::Threading::Thread::Sleep(100);//остановка программы, для замедления анимации
 			if (i == 39)
 				checkStart = true;
+		}
+		for (int i = 0; i < 40; i++) //проверка поля на фишки, которые находятся на одной ячейке и размещение их рядом
+		{
+			board[i].MoveOnCell(player1, player2, player3);
 		}
 		return  checkStart;
 	}
@@ -373,9 +379,10 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 {
 	textBox1->ForeColor = System::Drawing::Color::FromArgb(97, 97, 96);
 
-	if (users[0].GetArrested() == true)
+	if (users[curPlayerIndex].GetArrested() == true)
 	{
-		textBox1->Text = "\r\n" + "Прямо сейчас ты находишься в тюрьме и не можешь действовать. Если хочешь освободится - попробуй выбросить дубль или используй карточку досрочного освобождения из тюрьмы";
+		showNameCurCell->Text = "Ты в Тюрьме";
+		textBox1->Text = "Прямо сейчас ты находишься в тюрьме и не можешь действовать. Если хочешь освободится - попробуй выбросить дубль или используй карточку досрочного освобождения из тюрьмы";
 		roll->Visible = true;
 		useCard->Visible = true;
 		moveOn->Visible = true;
@@ -416,28 +423,34 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 			dice = dice1_roll + dice2_roll; //установка результатов броска
 		}
 
-		u/*sers[1].SetOwnStreet(streets[0]);
+		/*sers[1].SetOwnStreet(streets[0]);
 		streets[0].owner = users[1].userName;
 
 		users[2].SetOwnStreet(streets[17]);
 		streets[17].owner = users[2].userName;*/
 
-		bool checkStart = users[0].PlayersMoving(Player1, 13, board, Player1, Player2, Player3);
-		//users[1].PlayersMoving(Player2, 2, board, Player1, Player2, Player3);
-		//users[2].PlayersMoving(Player3, 2, board, Player1, Player2, Player3);//перемещение фишки игрока
+		bool checkStart;
+
+		if(curPlayerIndex == 0)
+			checkStart = users[curPlayerIndex].PlayersMoving(Player1, dice, board, Player1, Player2, Player3);
+		if(curPlayerIndex == 1)
+			checkStart = users[curPlayerIndex].PlayersMoving(Player2, dice, board, Player1, Player2, Player3);
+		if (curPlayerIndex == 2)
+			checkStart = users[curPlayerIndex].PlayersMoving(Player3, dice, board, Player1, Player2, Player3);
+
 		if (checkStart)
 		{
-			users[0].SetCash(200);
-			std::string buffString = std::to_string(users[0].GetCash()) + "$";
+			users[curPlayerIndex].SetCash(200);
+			std::string buffString = std::to_string(users[curPlayerIndex].GetCash()) + "$";
 			cash->Text = gcnew System::String(buffString.c_str());
-			buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+			buffString = std::to_string(users[curPlayerIndex].GetCash() + users[curPlayerIndex].GetStreetMoney()) + "$";
 			AllMoney->Text = gcnew System::String(buffString.c_str());
 		}
-		showNameCurCell->Text = "Ты попал на ячейку" + "\r\n" + msclr::interop::marshal_as<System::String^>(board[users[0].GetCurrentPos() - 1].name);
+		showNameCurCell->Text = "Ты попал на ячейку" + "\r\n" + msclr::interop::marshal_as<System::String^>(board[users[curPlayerIndex].GetCurrentPos() - 1].name);
 
 		std::srand(std::time(nullptr));
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "street")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "street")
 		{
 			std::ifstream file(msclr::interop::marshal_as<std::string>(Application::StartupPath) + "/streets.txt");
 			std::vector<std::string> lines;
@@ -449,7 +462,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 			std::string randomLine = lines[randomStreet];
 			textBox1->Text = gcnew String(randomLine.c_str());
 			for (int i = 0; i < 22; i++)
-				if (board[users[0].GetCurrentPos() - 1].name == streets[i].streetName)
+				if (board[users[curPlayerIndex].GetCurrentPos() - 1].name == streets[i].streetName)
 					streetIndex = i;
 			if (streets[streetIndex].owner == "monopoly")
 			{
@@ -462,7 +475,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 			else
 			{
 				std::string buffString = streets[streetIndex].CheckOwner(users, streets[streetIndex]);
-				if (users[0].userName == buffString)
+				if (users[curPlayerIndex].userName == buffString)
 				{
 					textBox1->Text += "\r\n" + "\r\n" + "Это твоя собственность" + "\r\n" + "Тебе ничего не надо платить";
 					moveOn->Visible = true;
@@ -483,7 +496,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "chance")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "chance")
 		{
 			randomChance = rand() % 16;
 			std::string randomLine = chance[randomChance].GetAction();
@@ -501,7 +514,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "treasury")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "treasury")
 		{
 			randomTreasury = rand() % 16;
 			std::string randomLine = treasury[randomTreasury].GetAction();
@@ -517,7 +530,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "tax")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "tax")
 		{
 			toPerform->Visible = true;
 			moveOn->Visible = true;
@@ -529,7 +542,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "superTax")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "superTax")
 		{
 			toPerform->Visible = true;
 			moveOn->Visible = true;
@@ -541,7 +554,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "freeParking")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "freeParking")
 		{
 			moveOn->Visible = true;
 			textBox1->Text = "\r\n" + "Обычная парковка, в обычном городе. Тут не на что смотреть... Хотя нет, я ошибся, она бесплатная, а это редкость в обычном городе";
@@ -551,7 +564,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "railway")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "railway")
 		{
 			std::ifstream file4(msclr::interop::marshal_as<std::string>(Application::StartupPath) + "/railway.txt");
 			std::vector<std::string> lines;
@@ -570,7 +583,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "prison")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "prison")
 		{
 			moveOn->Visible = true;
 			textBox1->Text = "\r\n" + "А это тюрьма. Как же хорошо, что мы не там сейчас. А вот если не платить налоги, то можно запросто угодить туда";
@@ -580,7 +593,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "goToPrison")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "goToPrison")
 		{
 			toPerform->Visible = true;
 			moveOn->Visible = true;
@@ -592,7 +605,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "electricity")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "electricity")
 		{
 			textBox1->Text = "\r\n" + "Электрическая компания, ничего более. Просто вырабатывает энергию для нашего Монополиса";
 			if (subStreets[0].owner == "monopoly")
@@ -606,7 +619,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 			else
 			{
 				std::string buffString = subStreets[0].CheckOwner(users, subStreets[0]);
-				if (users[0].userName == buffString)
+				if (users[curPlayerIndex].userName == buffString)
 				{
 					textBox1->Text += "\r\n" + "\r\n" + "Это твоя собственность" + "\r\n" + "Тебе ничего не надо платить";
 					moveOn->Visible = true;
@@ -627,7 +640,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "waterSupply")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "waterSupply")
 		{
 			textBox1->Text = "\r\n" + "Водопровод для нашего Монополиса";
 			if (subStreets[1].owner == "monopoly")
@@ -641,7 +654,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 			else
 			{
 				std::string buffString = subStreets[1].CheckOwner(users, subStreets[1]);
-				if (users[0].userName == buffString)
+				if (users[curPlayerIndex].userName == buffString)
 				{
 					textBox1->Text += "\r\n" + "\r\n" + "Это твоя собственность" + "\r\n" + "Тебе ничего не надо платить";
 					moveOn->Visible = true;
@@ -650,8 +663,8 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 				{
 					textBox1->Text += "\r\n" + "\r\n" + "Владелец: " + msclr::interop::marshal_as<System::String^>(buffString);
 					buffString = std::to_string(subStreets[1].rent[0]) + "$";
-					if (subStreets[0].owner == subStreets[1].owner)
-						buffString = std::to_string(subStreets[0].rent[1]) + "$";
+					if (subStreets[1].owner == subStreets[0].owner)
+						buffString = std::to_string(subStreets[1].rent[1]) + "$";
 					textBox1->Text += "\r\n" + "Вам придётся заплатить: " + msclr::interop::marshal_as<System::String^>(buffString);
 					moveOn->Visible = true;
 				}
@@ -662,17 +675,11 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 
 
 
-		if (board[users[0].GetCurrentPos() - 1].definition == "start")
+		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "start")
 		{
 			moveOn->Visible = true;
 			textBox1->Text = "\r\n" + "А вот и старт. Получай 200$ за то что ещё находишься в игре";
 		}
-
-
-
-
-
-		users[0].PlayersInfo(users, playersInfo);
 
 		rollDice->Enabled = false;
 	}
@@ -683,20 +690,20 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 	toPerform->Visible = false;
 	moveOn->Enabled = true;
 
-	if (board[users[0].GetCurrentPos() - 1].definition == "street")
+	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "street")
 	{
-		if (users[0].GetCash() >= streets[streetIndex].rent[streets[streetIndex].housesCount])
+		if (users[curPlayerIndex].GetCash() >= streets[streetIndex].rent[streets[streetIndex].housesCount])
 		{
-			users[0].SetCash(-streets[streetIndex].rent[streets[streetIndex].housesCount]);
-			std::string buffString = std::to_string(users[0].GetCash()) + "$";
+			users[curPlayerIndex].SetCash(-streets[streetIndex].rent[streets[streetIndex].housesCount]);
+			std::string buffString = std::to_string(users[curPlayerIndex].GetCash()) + "$";
 			cash->Text = gcnew System::String(buffString.c_str());
-			buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+			buffString = std::to_string(users[curPlayerIndex].GetCash() + users[curPlayerIndex].GetStreetMoney()) + "$";
 			AllMoney->Text = gcnew System::String(buffString.c_str());
 			textBox1->Text = "\r\n" + "Рента оплачена успешно";
 		}
 		else
 		{
-			if (users[0].GetStreetMoney() > 0)
+			if (users[curPlayerIndex].GetStreetMoney() > 0)
 			{
 				textBox1->Text = "\r\n" + "У тебя недостаточно средств, но в твоей собственности всё ещё находятся некоторые улицы. Можешь продать их, чтобы расплатить с долгами или же признать банкротство, закончив ход";
 				toPerform->Visible = true;
@@ -707,25 +714,32 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 		}
 	}
 
-	if (board[users[0].GetCurrentPos() - 1].definition == "chance")
+	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "chance")
 	{
 		if (chance[randomChance].GetCellToMove() != 0)
 		{
-			int moveOn = chance[randomChance].GetCellToMove() - users[0].GetCurrentPos();
+			int moveOn = chance[randomChance].GetCellToMove() - users[curPlayerIndex].GetCurrentPos();
 			if (chance[randomChance].GetCellToMove() < 0)
 				moveOn = chance[randomChance].GetCellToMove();
-			users[0].PlayersMoving(Player1, moveOn, board, Player1, Player2, Player3);
+			if (curPlayerIndex == 0)
+				users[curPlayerIndex].PlayersMoving(Player1, moveOn, board, Player1, Player2, Player3);
+
+			else if(curPlayerIndex == 1)
+					users[curPlayerIndex].PlayersMoving(Player2, moveOn, board, Player1, Player2, Player3);
+
+				else
+					users[curPlayerIndex].PlayersMoving(Player3, moveOn, board, Player1, Player2, Player3);
 		}
 		if (chance[randomChance].GetAddedCash() < 0)
 		{
-			if (users[0].GetCash() >= -chance[randomChance].GetAddedCash())
+			if (users[curPlayerIndex].GetCash() >= -chance[randomChance].GetAddedCash())
 			{
-				users[0].SetCash(chance[randomChance].GetAddedCash());
+				users[curPlayerIndex].SetCash(chance[randomChance].GetAddedCash());
 				textBox1->Text = "\r\n" + "Деньги поступили в банк";
 			}
 			else
 			{
-				if (users[0].GetStreetMoney() > 0)
+				if (users[curPlayerIndex].GetStreetMoney() > 0)
 				{
 					textBox1->Text += "\r\n" + "\r\n" + "У тебя недостаточно средств для оплаты. Ты можете продать улицы или признать, что ты БАНКРОТ";
 					toPerform->Visible = true;
@@ -738,17 +752,17 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 		}
 		if (chance[randomChance].GetAddedCash() > 0)
 		{
-			users[0].SetCash(chance[randomChance].GetAddedCash());
+			users[curPlayerIndex].SetCash(chance[randomChance].GetAddedCash());
 		}
 
 		if (randomChance == 2)
-			users[0].SetPrisonCard(true);
+			users[curPlayerIndex].SetPrisonCard(true);
 		if (randomChance == 7)
-			users[0].SetArrested(true);
+			users[curPlayerIndex].SetArrested(true);
 
-		std::string buffString = std::to_string(users[0].GetCash()) + "$";
+		std::string buffString = std::to_string(users[curPlayerIndex].GetCash()) + "$";
 		cash->Text = gcnew System::String(buffString.c_str());
-		buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+		buffString = std::to_string(users[curPlayerIndex].GetCash() + users[curPlayerIndex].GetStreetMoney()) + "$";
 		AllMoney->Text = gcnew System::String(buffString.c_str());
 	}
 
@@ -756,23 +770,30 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 
 
 
-	if (board[users[0].GetCurrentPos() - 1].definition == "treasury")
+	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "treasury")
 	{
 		if (treasury[randomTreasury].GetCellToMove() != 0)
 		{
-			int moveOn = treasury[randomTreasury].GetCellToMove() - users[0].GetCurrentPos();
-			users[0].PlayersMoving(Player1, moveOn, board, Player1, Player2, Player3);
+			int moveOn = treasury[randomTreasury].GetCellToMove() - users[curPlayerIndex].GetCurrentPos();
+			if (curPlayerIndex == 0)
+				users[curPlayerIndex].PlayersMoving(Player1, moveOn, board, Player1, Player2, Player3);
+
+			else if (curPlayerIndex == 1)
+				users[curPlayerIndex].PlayersMoving(Player2, moveOn, board, Player1, Player2, Player3);
+
+			else
+				users[curPlayerIndex].PlayersMoving(Player3, moveOn, board, Player1, Player2, Player3);
 		}
 		if (treasury[randomTreasury].GetAddedCash() < 0)
 		{
-			if (users[0].GetCash() >= -treasury[randomTreasury].GetAddedCash())
+			if (users[curPlayerIndex].GetCash() >= -treasury[randomTreasury].GetAddedCash())
 			{
-				users[0].SetCash(treasury[randomTreasury].GetAddedCash());
+				users[curPlayerIndex].SetCash(treasury[randomTreasury].GetAddedCash());
 				textBox1->Text = "\r\n" + "Передача выполнена успешно";
 			}
 			else
 			{
-				if (users[0].GetStreetMoney() > 0)
+				if (users[curPlayerIndex].GetStreetMoney() > 0)
 				{
 					textBox1->Text = "\r\n" + "У тебя недостаточно средств для оплаты. Необходимо " + -treasury[randomTreasury].GetAddedCash() + "$. Ты можете продать улицы или признать, что ты БАНКРОТ.";
 					toPerform->Visible = true;
@@ -786,19 +807,19 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 		if (treasury[randomTreasury].GetAddedCash() > 0)
 		{
 			if (randomTreasury == 13)
-				users[0].SetCash(10 * Player::playersNum);
+				users[curPlayerIndex].SetCash(10 * Player::playersNum);
 			else
-				users[0].SetCash(treasury[randomTreasury].GetAddedCash());
+				users[curPlayerIndex].SetCash(treasury[randomTreasury].GetAddedCash());
 			
 		}
 		if (randomTreasury == 2)
-			users[0].SetPrisonCard(true);
+			users[curPlayerIndex].SetPrisonCard(true);
 		if(randomTreasury == 6)
-			users[0].SetArrested(true);
+			users[curPlayerIndex].SetArrested(true);
 
-		std::string buffString = std::to_string(users[0].GetCash()) + "$";
+		std::string buffString = std::to_string(users[curPlayerIndex].GetCash()) + "$";
 		cash->Text = gcnew System::String(buffString.c_str());
-		buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+		buffString = std::to_string(users[curPlayerIndex].GetCash() + users[curPlayerIndex].GetStreetMoney()) + "$";
 		AllMoney->Text = gcnew System::String(buffString.c_str());
 	}
 
@@ -806,18 +827,18 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 
 
 
-	if (board[users[0].GetCurrentPos() - 1].definition == "tax")
+	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "tax")
 	{
-		if (users[0].GetCash() >= 100)
+		if (users[curPlayerIndex].GetCash() >= 100)
 		{
-			users[0].SetCash(-100);
-			textBox1->Text = "\r\n" + "Налог оплачен";
+			users[curPlayerIndex].SetCash(-100);
+			textBox1->Text = "\r\n" + "Налоги оплачены";
 		}
 		else
 		{
-			if (users[0].GetStreetMoney() > 0)
+			if (users[curPlayerIndex].GetStreetMoney() > 0)
 			{
-				textBox1->Text = "\r\n" + "Необходимо 100$, а у тебя всего лишь " + users[0].GetCash() + "$. Ты можете продать пару улиц и тогда есть возможность, что БАКРОТСТВО пройдёт мимо";
+				textBox1->Text = "\r\n" + "Необходимо 100$, а у тебя всего лишь " + users[curPlayerIndex].GetCash() + "$. Ты можете продать пару улиц и тогда есть возможность, что БАКРОТСТВО пройдёт мимо";
 				toPerform->Visible = true;
 			}
 			else
@@ -827,9 +848,9 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 		}
 		
 
-		std::string buffString = std::to_string(users[0].GetCash()) + "$";
+		std::string buffString = std::to_string(users[curPlayerIndex].GetCash()) + "$";
 		cash->Text = gcnew System::String(buffString.c_str());
-		buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+		buffString = std::to_string(users[curPlayerIndex].GetCash() + users[curPlayerIndex].GetStreetMoney()) + "$";
 		AllMoney->Text = gcnew System::String(buffString.c_str());
 	}
 
@@ -837,18 +858,18 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 
 
 
-	if (board[users[0].GetCurrentPos() - 1].definition == "superTax")
+	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "superTax")
 	{
-		if (users[0].GetCash() >= 200)
+		if (users[curPlayerIndex].GetCash() >= 200)
 		{
-			users[0].SetCash(-200);
-			textBox1->Text = "\r\n" + "Супер-налог оплачен";
+			users[curPlayerIndex].SetCash(-200);
+			textBox1->Text = "\r\n" + "Налоги оплачены";
 		}
 		else
 		{
-			if (users[0].GetStreetMoney() > 0)
+			if (users[curPlayerIndex].GetStreetMoney() > 0)
 			{
-				textBox1->Text = "\r\n" + "Для оплаты надо 200$, а у тебя всего лишь " + users[0].GetCash() + "$. Ты конечно можешь продать всю свою недвижимость, но не факт что это тебе поможет";
+				textBox1->Text = "\r\n" + "Для оплаты надо 200$, а у тебя всего лишь " + users[curPlayerIndex].GetCash() + "$. Ты конечно можешь продать всю свою недвижимость, но не факт что это тебе поможет";
 				toPerform->Visible = true;
 			}
 			else
@@ -857,9 +878,9 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 			}
 		}
 
-		std::string buffString = std::to_string(users[0].GetCash()) + "$";
+		std::string buffString = std::to_string(users[curPlayerIndex].GetCash()) + "$";
 		cash->Text = gcnew System::String(buffString.c_str());
-		buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+		buffString = std::to_string(users[curPlayerIndex].GetCash() + users[curPlayerIndex].GetStreetMoney()) + "$";
 		AllMoney->Text = gcnew System::String(buffString.c_str());
 	}
 
@@ -867,10 +888,17 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 
 
 
-	if (board[users[0].GetCurrentPos() - 1].definition == "goToPrison")
+	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "goToPrison")
 	{
-		users[0].SetArrested(true);
-		users[0].PlayersMoving(Player1, 20, board, Player1, Player2, Player3);
+		users[curPlayerIndex].SetArrested(true);
+		if (curPlayerIndex == 0)
+			users[curPlayerIndex].PlayersMoving(Player1, 20, board, Player1, Player2, Player3);
+
+		else if(curPlayerIndex == 1)
+			users[curPlayerIndex].PlayersMoving(Player2, 20, board, Player1, Player2, Player3);
+
+		else
+			users[curPlayerIndex].PlayersMoving(Player3, 20, board, Player1, Player2, Player3);
 	}
 }
 
@@ -921,7 +949,7 @@ System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ 
 
 	setlocale(LC_ALL, "Russian");
 
-	UserName->Text = gcnew System::String(users[0].userName.c_str()); //установка имени пользователя из объекта класса
+	UserName->Text = gcnew System::String(users[0].userName.c_str()); //установка имени пользователя из класса
 
 	//установка общего кол-ва денег пользователя из объекта класса
 	std::string buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
@@ -1048,6 +1076,8 @@ System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ 
 
 	subStreets[0].subStreetName = "electricity";
 	subStreets[1].subStreetName = "waterSupply";
+
+	users[curPlayerIndex].PlayersInfo(users, playersInfo);
 }
 
 System::Void GameForm::UnFocus(System::Object^ sender, System::EventArgs^ e)
@@ -1103,16 +1133,14 @@ System::Void GameForm::timer1_Tick(System::Object^ sender, System::EventArgs^ e)
 
 System::Void GameForm::buy_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	users[0].SetOwnStreet(streets[21]);
-	streets[21].owner = users[0].userName;
-	if (board[users[0].GetCurrentPos() - 1].definition == "street")
+	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "street")
 	{
-		streets[streetIndex].owner = users[0].userName;
-		if (users[0].GetCash() >= streets[streetIndex].cost)
+		streets[streetIndex].owner = users[curPlayerIndex].userName;
+		if (users[curPlayerIndex].GetCash() >= streets[streetIndex].cost)
 		{
-			users[0].SetCash(-streets[streetIndex].cost);
-			users[0].SetOwnStreet(streets[streetIndex]);
-			users[0].SetStreetMoney(streets[streetIndex].cost / 2);
+			users[curPlayerIndex].SetCash(-streets[streetIndex].cost);
+			users[curPlayerIndex].SetOwnStreet(streets[streetIndex]);
+			users[curPlayerIndex].SetStreetMoney(streets[streetIndex].cost / 2);
 		}
 		else
 		{
@@ -1123,13 +1151,13 @@ System::Void GameForm::buy_Click(System::Object^ sender, System::EventArgs^ e)
 		buy->Enabled = false;
 	}
 
-	if (board[users[0].GetCurrentPos() - 1].definition == "electricity")
+	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "electricity")
 	{
-		subStreets[0].owner = users[0].userName;
-		if (users[0].GetCash() >= subStreets[0].cost)
+		subStreets[0].owner = users[curPlayerIndex].userName;
+		if (users[curPlayerIndex].GetCash() >= subStreets[0].cost)
 		{
-			users[0].SetOwnSubStreet(subStreets[0]);
-			users[0].SetCash(-subStreets[0].cost);
+			users[curPlayerIndex].SetOwnSubStreet(subStreets[0]);
+			users[curPlayerIndex].SetCash(-subStreets[0].cost);
 		}
 		else
 		{
@@ -1140,13 +1168,13 @@ System::Void GameForm::buy_Click(System::Object^ sender, System::EventArgs^ e)
 		buy->Enabled = false;
 	}
 
-	if (board[users[0].GetCurrentPos() - 1].definition == "waterSupply")
+	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "waterSupply")
 	{
 		subStreets[1].owner = users[0].userName;
-		if (users[0].GetCash() >= subStreets[1].cost)
+		if (users[curPlayerIndex].GetCash() >= subStreets[1].cost)
 		{
-			users[0].SetOwnSubStreet(subStreets[1]);
-			users[0].SetCash(-subStreets[1].cost);
+			users[curPlayerIndex].SetOwnSubStreet(subStreets[1]);
+			users[curPlayerIndex].SetCash(-subStreets[1].cost);
 		}
 		else
 		{
@@ -1157,11 +1185,11 @@ System::Void GameForm::buy_Click(System::Object^ sender, System::EventArgs^ e)
 		buy->Enabled = false;
 	}
 
-	std::string buffString = std::to_string(users[0].GetCash()) + "$";
+	std::string buffString = std::to_string(users[curPlayerIndex].GetCash()) + "$";
 	cash->Text = gcnew System::String(buffString.c_str());
-	buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+	buffString = std::to_string(users[curPlayerIndex].GetCash() + users[curPlayerIndex].GetStreetMoney()) + "$";
 	AllMoney->Text = gcnew System::String(buffString.c_str());
-	buffString = std::to_string(users[0].GetStreetMoney()) + "$";
+	buffString = std::to_string(users[curPlayerIndex].GetStreetMoney()) + "$";
 	streetMoney->Text = gcnew System::String(buffString.c_str());
 
 	for (int i = this->Controls->Count - 1; i >= 0; i--) {
@@ -1222,12 +1250,18 @@ System::Void GameForm::buy_MouseLeave(System::Object^ sender, System::EventArgs^
 
 System::Void GameForm::moveOn_Click(System::Object^ sender, System::EventArgs^ e)
 {
+	curPlayerIndex++;
+	if (curPlayerIndex > Player::playersNum - 1)
+		curPlayerIndex = 0;
+	showNameCurCell->Text = "Очередь хода" + "\r\n" + msclr::interop::marshal_as<System::String^>(users[curPlayerIndex].userName);
+	textBox1->Text = "Ход передан игроку с никнеймом " + msclr::interop::marshal_as<System::String^>(users[curPlayerIndex].userName);
 	moveOn->Visible = false;
 	moveOn->Enabled = false;
 	buy->Enabled = false;
-	rollDice->Enabled = true;
 	roll->Visible = false;
 	useCard->Visible = false;
+	ok->Visible = true;
+	saleButton->Enabled = false;
 }
 
 System::Void GameForm::moveOn_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
@@ -1254,7 +1288,7 @@ System::Void GameForm::GameForm_MouseEnter(System::Object^ sender, System::Event
 
 System::Void GameForm::roll_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	textBox1->Text = "\r\n" + "Прямо сейчас ты находишься в тюрьме и не можешь действовать. Если хочешь освободится - попробуй выбросить дубль или используй карточку досрочного освобождения из тюрьмы";
+	textBox1->Text = "Прямо сейчас ты находишься в тюрьме и не можешь действовать. Если хочешь освободится - попробуй выбросить дубль или используй карточку досрочного освобождения из тюрьмы";
 
 	rollDice->Image = Image::FromFile(Application::StartupPath + "\\assets\\rollTheDice_onRoll.png"); //установк каринки, которая будет отображаться на кнопке, пока идёт бросок кубиков
 	rollDice->Refresh(); //обновления картинки
@@ -1282,8 +1316,8 @@ System::Void GameForm::roll_Click(System::Object^ sender, System::EventArgs^ e)
 
 	if (dice1_roll == dice2_roll)
 	{
-		textBox1->Text = "\r\n" + "Поздравляю, ты смог выбросить дубль и сбежать из этого ужасного места. Надеюсь, это не станет твоим постоянным домом в будущем";
-		users[0].SetArrested(false);
+		textBox1->Text = "Поздравляю, ты смог выбросить дубль и сбежать из этого ужасного места. Надеюсь, это не станет твоим постоянным домом в будущем";
+		users[curPlayerIndex].SetArrested(false);
 		useCard->Visible = false;
 	}
 	else
@@ -1313,13 +1347,13 @@ System::Void GameForm::roll_MouseLeave(System::Object^ sender, System::EventArgs
 
 System::Void GameForm::useCard_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	textBox1->Text = "\r\n" + "Прямо сейчас ты находишься в тюрьме и не можешь действовать. Если хочешь освободится - попробуй выбросить дубль или используй карточку досрочного освобождения из тюрьмы";
+	textBox1->Text = "Прямо сейчас ты находишься в тюрьме и не можешь действовать. Если хочешь освободится - попробуй выбросить дубль или используй карточку досрочного освобождения из тюрьмы";
 
 	useCard->Visible = false;
-	if (users[0].GetPrisonCard())
+	if (users[curPlayerIndex].GetPrisonCard())
 	{
-		textBox1->Text = "\r\n" + "Поздравляю, твоя карточка спасла тебе жизнь, потому что в этой тюрьме не любят тех, кто не платит налоги";
-		users[0].SetArrested(false);
+		textBox1->Text = "Поздравляю, твоя карточка спасла тебе жизнь, потому что в этой тюрьме не любят тех, кто не платит налоги";
+		users[curPlayerIndex].SetArrested(false);
 		roll->Visible = false;
 	}
 	else
@@ -1435,14 +1469,14 @@ System::Void GameForm::sale_Click(System::Object^ sender, System::EventArgs^ e)
 			streetNum = i;
 		}
 	}
-	bool buffBool = users[0].SellStreet(msclr::interop::marshal_as<std::string>(streetNameForSale->Text));
+	bool buffBool = users[curPlayerIndex].SellStreet(msclr::interop::marshal_as<std::string>(streetNameForSale->Text));
 	if (buffBool)
 	{
 		streets[streetNum].owner = "monopoly";
 		streetNameForSale->ForeColor = System::Drawing::Color::FromArgb(48, 154, 74);
 		streetNameForSale->Text = "Ваша улица успешно продана";
-		users[0].SetCash(streets[streetNum].cost / 2);
-		users[0].SetStreetMoney(-streets[streetNum].cost / 2);
+		users[curPlayerIndex].SetCash(streets[streetNum].cost / 2);
+		users[curPlayerIndex].SetStreetMoney(-streets[streetNum].cost / 2);
 	}
 	else
 	{
@@ -1486,11 +1520,11 @@ System::Void GameForm::sale_Click(System::Object^ sender, System::EventArgs^ e)
 		}
 	}
 
-	std::string buffString = std::to_string(users[0].GetCash()) + "$";
+	std::string buffString = std::to_string(users[curPlayerIndex].GetCash()) + "$";
 	cash->Text = gcnew System::String(buffString.c_str());
-	buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+	buffString = std::to_string(users[curPlayerIndex].GetCash() + users[curPlayerIndex].GetStreetMoney()) + "$";
 	AllMoney->Text = gcnew System::String(buffString.c_str());
-	buffString = std::to_string(users[0].GetStreetMoney()) + "$";
+	buffString = std::to_string(users[curPlayerIndex].GetStreetMoney()) + "$";
 	streetMoney->Text = gcnew System::String(buffString.c_str());
 
 }
@@ -1518,3 +1552,37 @@ System::Void GameForm::streetNameForSale_MouseDown(System::Object^ sender, Syste
 	streetNameForSale->Text = "";
 }
 
+
+System::Void GameForm::ok_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	ok->Visible = false;
+	array<String^>^ usersIcon = gcnew array<String^>{"user1Icon.png", "user2Icon.png", "user3Icon.png"};
+	userIcon->Image = Image::FromFile(Application::StartupPath + "\\assets\\" + usersIcon[curPlayerIndex]);
+	std::string buffString = std::to_string(users[curPlayerIndex].GetCash()) + "$";
+	cash->Text = gcnew System::String(buffString.c_str());
+	buffString = std::to_string(users[curPlayerIndex].GetCash() + users[curPlayerIndex].GetStreetMoney()) + "$";
+	AllMoney->Text = gcnew System::String(buffString.c_str());
+	buffString = std::to_string(users[curPlayerIndex].GetStreetMoney()) + "$";
+	streetMoney->Text = gcnew System::String(buffString.c_str());
+	UserName->Text = msclr::interop::marshal_as<System::String^>(users[curPlayerIndex].userName);
+	users[curPlayerIndex].PlayersInfo(users, playersInfo);
+	rollDice->Enabled = true;
+	saleButton->Enabled = true;
+}
+
+System::Void GameForm::ok_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	ok->Image = Image::FromFile(Application::StartupPath + "\\assets\\ok_onMouseDown.png");
+}
+System::Void GameForm::ok_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+{
+	ok->Image = Image::FromFile(Application::StartupPath + "\\assets\\ok_onMouseUp.png");
+}
+System::Void GameForm::ok_MouseEnter(System::Object^ sender, System::EventArgs^ e)
+{
+	ok->Image = Image::FromFile(Application::StartupPath + "\\assets\\ok_onMouseEnter.png");
+}
+System::Void GameForm::ok_MouseLeave(System::Object^ sender, System::EventArgs^ e)
+{
+	ok->Image = Image::FromFile(Application::StartupPath + "\\assets\\ok_onMouseUp.png");
+}

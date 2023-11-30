@@ -173,6 +173,11 @@ private: System::Windows::Forms::PictureBox^ sale;
 public:
 
 private: System::Windows::Forms::PictureBox^ notSale;
+private: System::Windows::Forms::PictureBox^ userIcon;
+private: System::Windows::Forms::PictureBox^ ok;
+
+
+
 
 
 
@@ -291,6 +296,8 @@ public:
 			this->streetNameForSale = (gcnew System::Windows::Forms::TextBox());
 			this->sale = (gcnew System::Windows::Forms::PictureBox());
 			this->notSale = (gcnew System::Windows::Forms::PictureBox());
+			this->userIcon = (gcnew System::Windows::Forms::PictureBox());
+			this->ok = (gcnew System::Windows::Forms::PictureBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->backToMenu))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_11))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_12))->BeginInit();
@@ -348,6 +355,8 @@ public:
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->saleStreets))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->sale))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->notSale))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->userIcon))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->ok))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// backToMenu
@@ -820,12 +829,12 @@ public:
 			this->UserName->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(50)), static_cast<System::Int32>(static_cast<System::Byte>(21)),
 				static_cast<System::Int32>(static_cast<System::Byte>(54)));
 			this->UserName->ImeMode = System::Windows::Forms::ImeMode::NoControl;
-			this->UserName->Location = System::Drawing::Point(145, 15);
+			this->UserName->Location = System::Drawing::Point(159, 20);
 			this->UserName->MaxLength = 7;
 			this->UserName->Name = L"UserName";
 			this->UserName->ReadOnly = true;
 			this->UserName->ShortcutsEnabled = false;
-			this->UserName->Size = System::Drawing::Size(369, 74);
+			this->UserName->Size = System::Drawing::Size(304, 74);
 			this->UserName->TabIndex = 85;
 			this->UserName->TabStop = false;
 			this->UserName->Text = L"YourName";
@@ -1189,6 +1198,32 @@ public:
 			this->notSale->MouseLeave += gcnew System::EventHandler(this, &GameForm::notSale_MouseLeave);
 			this->notSale->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::notSale_MouseUp);
 			// 
+			// userIcon
+			// 
+			this->userIcon->BackColor = System::Drawing::Color::Transparent;
+			this->userIcon->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"userIcon.Image")));
+			this->userIcon->Location = System::Drawing::Point(68, 14);
+			this->userIcon->Name = L"userIcon";
+			this->userIcon->Size = System::Drawing::Size(85, 88);
+			this->userIcon->TabIndex = 105;
+			this->userIcon->TabStop = false;
+			// 
+			// ok
+			// 
+			this->ok->BackColor = System::Drawing::Color::Transparent;
+			this->ok->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"ok.Image")));
+			this->ok->Location = System::Drawing::Point(1573, 693);
+			this->ok->Name = L"ok";
+			this->ok->Size = System::Drawing::Size(287, 50);
+			this->ok->TabIndex = 106;
+			this->ok->TabStop = false;
+			this->ok->Visible = false;
+			this->ok->Click += gcnew System::EventHandler(this, &GameForm::ok_Click);
+			this->ok->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::ok_MouseDown);
+			this->ok->MouseEnter += gcnew System::EventHandler(this, &GameForm::ok_MouseEnter);
+			this->ok->MouseLeave += gcnew System::EventHandler(this, &GameForm::ok_MouseLeave);
+			this->ok->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &GameForm::ok_MouseUp);
+			// 
 			// GameForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -1198,6 +1233,8 @@ public:
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
 			this->ClientSize = System::Drawing::Size(1904, 1041);
+			this->Controls->Add(this->ok);
+			this->Controls->Add(this->userIcon);
 			this->Controls->Add(this->streetNameForSale);
 			this->Controls->Add(this->notSale);
 			this->Controls->Add(this->sale);
@@ -1269,7 +1306,6 @@ public:
 			this->Text = L"GameForm";
 			this->WindowState = System::Windows::Forms::FormWindowState::Maximized;
 			this->Load += gcnew System::EventHandler(this, &GameForm::GameForm_Load);
-			this->MouseEnter += gcnew System::EventHandler(this, &GameForm::GameForm_MouseEnter);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->backToMenu))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_11))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cell_12))->EndInit();
@@ -1327,6 +1363,8 @@ public:
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->saleStreets))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->sale))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->notSale))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->userIcon))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->ok))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -1412,6 +1450,11 @@ public:
 	private: System::Void sale_MouseLeave(System::Object^ sender, System::EventArgs^ e);
 
 	private: System::Void streetNameForSale_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void ok_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void ok_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void ok_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+	private: System::Void ok_MouseEnter(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void ok_MouseLeave(System::Object^ sender, System::EventArgs^ e);
 };
 }
 
