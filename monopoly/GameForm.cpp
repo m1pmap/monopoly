@@ -942,25 +942,20 @@ System::Void GameForm::rollDice_MouseLeave(System::Object^ sender, System::Event
 
 System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ e) //функци€, срабатывающу€ при загрузке формы
 {
-	if(Player::playersNum > 1)
-		users[1].userName = "User1";
-	if(Player::playersNum > 2)
-		users[2].userName = "User2";
-
 	setlocale(LC_ALL, "Russian");
 
-	UserName->Text = gcnew System::String(users[0].userName.c_str()); //установка имени пользовател€ из класса
+	UserName->Text = gcnew System::String(users[curPlayerIndex].userName.c_str()); //установка имени пользовател€ из класса
 
 	//установка общего кол-ва денег пользовател€ из объекта класса
-	std::string buffString = std::to_string(users[0].GetCash() + users[0].GetStreetMoney()) + "$";
+	std::string buffString = std::to_string(users[curPlayerIndex].GetCash() + users[curPlayerIndex].GetStreetMoney()) + "$";
 	AllMoney->Text = gcnew System::String(buffString.c_str());
 
 	//установка наличных денег пользовател€ из объекта класса
-	buffString = std::to_string(users[0].GetCash()) + "$";
+	buffString = std::to_string(users[curPlayerIndex].GetCash()) + "$";
 	cash->Text = gcnew System::String(buffString.c_str());
 
 	//установка имени пользовател€ из объекта класса
-	buffString = std::to_string(users[0].GetStreetMoney()) + "$";
+	buffString = std::to_string(users[curPlayerIndex].GetStreetMoney()) + "$";
 	streetMoney->Text = gcnew System::String(buffString.c_str());
 
 	srand(time(NULL));

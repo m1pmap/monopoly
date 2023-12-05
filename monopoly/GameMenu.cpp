@@ -2,6 +2,7 @@
 #include "GameForm.h"
 #include <msclr/marshal_cppstd.h>
 #include <string>
+#include <iostream>
 
 using namespace System;
 using namespace System::Windows::Forms;
@@ -16,15 +17,21 @@ int main(array<String^>^ args)
 	Application::Run(% form1);
 }
 
-int Player::playersNum = 2;
-
 bool arrowBool = true;
 int currentImageIndex = 0;
 
+int Player::playersNum = 3;
+int Player::playersNum = 2;
+
 System::Void GameMenu::StartGame_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	int playersNum = Player::playersNum;
-	GameForm^ f = gcnew GameForm(this, playersNum);
+	if (Int32::Parse(playersCount->Text) > 0)
+		users[0].userName = msclr::interop::marshal_as<std::string>(userName1->Text);
+	if(Int32::Parse(playersCount->Text) > 1)
+		users[1].userName = msclr::interop::marshal_as<std::string>(userName2->Text);
+	if(Int32::Parse(playersCount->Text) > 2)
+		users[2].userName = msclr::interop::marshal_as<std::string>(userName3->Text);
+	GameForm^ f = gcnew GameForm(this, Int32::Parse(playersCount->Text));
 	f->Show();
 	this->Hide();
 }
@@ -230,6 +237,51 @@ System::Void GameMenu::changeName_MouseLeave(System::Object^ sender, System::Eve
 		changeName->Image = Image::FromFile(Application::StartupPath + "\\assets\\save_onMouseUp.png");
 }
 
+bool startSettingsBool = true;
+
+System::Void GameMenu::arrowUp_Click(System::Object^ sender, System::EventArgs^ e)
+{
+		timer2->Start();
+		startSettingsBool = false;
+		arrowUp->Visible = false;
+}
+
+System::Void GameMenu::arrowDown_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	timer2->Start();
+	startSettingsBool = true;
+	arrowDown->Visible = false;
+	playersCount->Visible = false;
+	userName1->Visible = false;
+	userName2->Visible = false;
+	userName3->Visible = false;
+}
+
+
+System::Void GameMenu::timer2_Tick(System::Object^ sender, System::EventArgs^ e)
+{
+	if (!startSettingsBool)
+	{
+		if (startSettings->Top > 1020)
+			startSettings->Top -= 5;
+		else {
+			timer2->Stop();
+			arrowDown->Visible = true;
+			playersCount->Visible = true;
+			userName1->Visible = true;
+			userName2->Visible = true;
+			userName3->Visible = true;
+		}
+	}
+	else {
+		if (startSettings->Top < 1080)
+			startSettings->Top += 5;
+		else {
+			timer2->Stop();
+			arrowUp->Visible = true;
+		}
+	}
+}
 
 
 

@@ -52,6 +52,22 @@ namespace monopoly {
 	private:
 
 	private: System::ComponentModel::BackgroundWorker^ backgroundWorker1;
+	private: System::Windows::Forms::PictureBox^ startSettings;
+
+	private: System::Windows::Forms::PictureBox^ arrowUp;
+	private: System::Windows::Forms::Timer^ timer2;
+	private: System::Windows::Forms::PictureBox^ arrowDown;
+	public: System::Windows::Forms::TextBox^ playersCount;
+	public: System::Windows::Forms::TextBox^ userName1;
+	public: System::Windows::Forms::TextBox^ userName2;
+	public: System::Windows::Forms::TextBox^ userName3;
+
+	private:
+
+
+
+
+
 	private: System::ComponentModel::IContainer^ components;
 	public:
 	protected:
@@ -87,6 +103,14 @@ namespace monopoly {
 			this->changeName = (gcnew System::Windows::Forms::PictureBox());
 			this->UserName = (gcnew System::Windows::Forms::TextBox());
 			this->backgroundWorker1 = (gcnew System::ComponentModel::BackgroundWorker());
+			this->startSettings = (gcnew System::Windows::Forms::PictureBox());
+			this->arrowUp = (gcnew System::Windows::Forms::PictureBox());
+			this->timer2 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->arrowDown = (gcnew System::Windows::Forms::PictureBox());
+			this->playersCount = (gcnew System::Windows::Forms::TextBox());
+			this->userName1 = (gcnew System::Windows::Forms::TextBox());
+			this->userName2 = (gcnew System::Windows::Forms::TextBox());
+			this->userName3 = (gcnew System::Windows::Forms::TextBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->startGame))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->closeGame))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->card))->BeginInit();
@@ -96,6 +120,9 @@ namespace monopoly {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->arrowPrev))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->arrowNext))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->changeName))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->startSettings))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->arrowUp))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->arrowDown))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// startGame
@@ -184,7 +211,7 @@ namespace monopoly {
 			this->characters->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"characters.Image")));
 			this->characters->Location = System::Drawing::Point(150, 152);
 			this->characters->Name = L"characters";
-			this->characters->Size = System::Drawing::Size(1696, 863);
+			this->characters->Size = System::Drawing::Size(1696, 775);
 			this->characters->TabIndex = 6;
 			this->characters->TabStop = false;
 			this->characters->Visible = false;
@@ -253,6 +280,105 @@ namespace monopoly {
 			this->UserName->MouseEnter += gcnew System::EventHandler(this, &GameMenu::Unfocus);
 			this->UserName->MouseLeave += gcnew System::EventHandler(this, &GameMenu::Unfocus);
 			// 
+			// startSettings
+			// 
+			this->startSettings->BackColor = System::Drawing::Color::Transparent;
+			this->startSettings->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"startSettings.Image")));
+			this->startSettings->Location = System::Drawing::Point(18, 1080);
+			this->startSettings->Name = L"startSettings";
+			this->startSettings->Size = System::Drawing::Size(1892, 50);
+			this->startSettings->TabIndex = 12;
+			this->startSettings->TabStop = false;
+			// 
+			// arrowUp
+			// 
+			this->arrowUp->BackColor = System::Drawing::Color::Transparent;
+			this->arrowUp->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"arrowUp.Image")));
+			this->arrowUp->Location = System::Drawing::Point(951, 1028);
+			this->arrowUp->Name = L"arrowUp";
+			this->arrowUp->Size = System::Drawing::Size(72, 40);
+			this->arrowUp->TabIndex = 13;
+			this->arrowUp->TabStop = false;
+			this->arrowUp->Click += gcnew System::EventHandler(this, &GameMenu::arrowUp_Click);
+			// 
+			// timer2
+			// 
+			this->timer2->Interval = 10;
+			this->timer2->Tick += gcnew System::EventHandler(this, &GameMenu::timer2_Tick);
+			// 
+			// arrowDown
+			// 
+			this->arrowDown->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->arrowDown->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"arrowDown.Image")));
+			this->arrowDown->Location = System::Drawing::Point(951, 1031);
+			this->arrowDown->Name = L"arrowDown";
+			this->arrowDown->Size = System::Drawing::Size(72, 35);
+			this->arrowDown->TabIndex = 14;
+			this->arrowDown->TabStop = false;
+			this->arrowDown->Visible = false;
+			this->arrowDown->Click += gcnew System::EventHandler(this, &GameMenu::arrowDown_Click);
+			// 
+			// playersCount
+			// 
+			this->playersCount->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(51)), static_cast<System::Int32>(static_cast<System::Byte>(21)),
+				static_cast<System::Int32>(static_cast<System::Byte>(54)));
+			this->playersCount->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->playersCount->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->playersCount->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->playersCount->Location = System::Drawing::Point(349, 1039);
+			this->playersCount->Name = L"playersCount";
+			this->playersCount->Size = System::Drawing::Size(166, 19);
+			this->playersCount->TabIndex = 15;
+			this->playersCount->Visible = false;
+			// 
+			// userName1
+			// 
+			this->userName1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(51)), static_cast<System::Int32>(static_cast<System::Byte>(21)),
+				static_cast<System::Int32>(static_cast<System::Byte>(54)));
+			this->userName1->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->userName1->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->userName1->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->userName1->Location = System::Drawing::Point(751, 1039);
+			this->userName1->Name = L"userName1";
+			this->userName1->Size = System::Drawing::Size(166, 19);
+			this->userName1->TabIndex = 16;
+			this->userName1->Visible = false;
+			// 
+			// userName2
+			// 
+			this->userName2->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(51)), static_cast<System::Int32>(static_cast<System::Byte>(21)),
+				static_cast<System::Int32>(static_cast<System::Byte>(54)));
+			this->userName2->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->userName2->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->userName2->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->userName2->Location = System::Drawing::Point(1273, 1039);
+			this->userName2->Name = L"userName2";
+			this->userName2->Size = System::Drawing::Size(166, 19);
+			this->userName2->TabIndex = 17;
+			this->userName2->Visible = false;
+			// 
+			// userName3
+			// 
+			this->userName3->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(51)), static_cast<System::Int32>(static_cast<System::Byte>(21)),
+				static_cast<System::Int32>(static_cast<System::Byte>(54)));
+			this->userName3->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->userName3->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->userName3->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(222)),
+				static_cast<System::Int32>(static_cast<System::Byte>(179)));
+			this->userName3->Location = System::Drawing::Point(1674, 1039);
+			this->userName3->Name = L"userName3";
+			this->userName3->Size = System::Drawing::Size(166, 19);
+			this->userName3->TabIndex = 18;
+			this->userName3->Visible = false;
+			// 
 			// GameMenu
 			// 
 			this->AccessibleRole = System::Windows::Forms::AccessibleRole::None;
@@ -264,6 +390,13 @@ namespace monopoly {
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
 			this->ClientSize = System::Drawing::Size(1904, 1041);
 			this->ControlBox = false;
+			this->Controls->Add(this->userName3);
+			this->Controls->Add(this->userName2);
+			this->Controls->Add(this->userName1);
+			this->Controls->Add(this->playersCount);
+			this->Controls->Add(this->arrowDown);
+			this->Controls->Add(this->arrowUp);
+			this->Controls->Add(this->startSettings);
 			this->Controls->Add(this->changeName);
 			this->Controls->Add(this->UserName);
 			this->Controls->Add(this->arrowPrev);
@@ -288,6 +421,9 @@ namespace monopoly {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->arrowPrev))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->arrowNext))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->changeName))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->startSettings))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->arrowUp))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->arrowDown))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -332,5 +468,8 @@ private: System::Void arrowLeft_MouseDown(System::Object^ sender, System::Window
 private: System::Void arrowLeft_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
 private: System::Void arrowLeft_MouseEnter(System::Object^ sender, System::EventArgs^ e);
 private: System::Void arrowLeft_MouseLeave(System::Object^ sender, System::EventArgs^ e);
+private: System::Void arrowUp_Click(System::Object^ sender, System::EventArgs^ e);
+private: System::Void timer2_Tick(System::Object^ sender, System::EventArgs^ e);
+private: System::Void arrowDown_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }
