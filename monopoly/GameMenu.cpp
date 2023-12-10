@@ -20,17 +20,17 @@ int main(array<String^>^ args)
 bool arrowBool = true;
 int currentImageIndex = 0;
 
-int Player::playersNum = 3;
-int Player::playersNum = 2;
+int Player::playersNum;
 
 System::Void GameMenu::StartGame_Click(System::Object^ sender, System::EventArgs^ e)
 {
+	Player::playersNum = Int32::Parse(playersCount->Text);
 	if (Int32::Parse(playersCount->Text) > 0)
-		users[0].userName = msclr::interop::marshal_as<std::string>(userName1->Text);
+		user1.userName = msclr::interop::marshal_as<std::string>(userName1->Text);
 	if(Int32::Parse(playersCount->Text) > 1)
-		users[1].userName = msclr::interop::marshal_as<std::string>(userName2->Text);
+		user2.userName = msclr::interop::marshal_as<std::string>(userName2->Text);
 	if(Int32::Parse(playersCount->Text) > 2)
-		users[2].userName = msclr::interop::marshal_as<std::string>(userName3->Text);
+		user3.userName = msclr::interop::marshal_as<std::string>(userName3->Text);
 	GameForm^ f = gcnew GameForm(this, Int32::Parse(playersCount->Text));
 	f->Show();
 	this->Hide();
@@ -200,7 +200,7 @@ System::Void GameMenu::changeName_Click(System::Object^ sender, System::EventArg
 	{
 		UserName->ReadOnly = true;	//запрет изменять имя игрока
 		changeName->Image = Image::FromFile(Application::StartupPath + "\\assets\\changeName_onMouseUp.png");	//смена картинки на "изменить"
-		users[0].userName = msclr::interop::marshal_as<std::string>(UserName->Text);
+		//users[0].userName = msclr::interop::marshal_as<std::string>(UserName->Text);
 		changeNameBool = true;	//изменение на противоположное значение
 	}
 }

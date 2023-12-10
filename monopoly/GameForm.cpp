@@ -16,9 +16,15 @@ Player::Player() //конструктор класса Player, который устанавливает начальные зн
 	prisonCard = false;
 }
 
+Player user1;
+Player user2;
+Player user3;
+
 int curPlayerIndex = 0;
 
-Player* users = new Player[Player::playersNum]; //создание массива с пользователями
+//Player* users = new Player[globalPlayersNum]; //создание массива с пользователями
+
+std::vector<Player> users;
 
 Cell board[40]; //массив ячеек поля
 Cell streetBoard[22];
@@ -164,7 +170,7 @@ void Player::SetStreetMoney(int streetMoney)
 {
 	this->streetMoney += streetMoney;
 }
-void Player::PlayersInfo(Player users[], System::Windows::Forms::TextBox^ textBox)
+void Player::PlayersInfo(std::vector<Player> users, System::Windows::Forms::TextBox^ textBox)
 {
 	textBox->Text = "";
 	std::vector<Player> onlinePlayers;
@@ -190,7 +196,7 @@ void Player::SetPrisonCard(bool arrested)
 }
 
 //МЕТОДЫ КЛАССА CELL
-int Cell::OnCell(Player users[]) //возвращает кол-во игроков на определённой ячейке
+int Cell::OnCell(std::vector<Player> users) //возвращает кол-во игроков на определённой ячейке
 {
 	int count = 0;
 	for (int i = 0; i < Player::playersNum; i++)
@@ -263,7 +269,7 @@ Street::Street()
 	housesCount = 0;
 }
 
-std::string Street::CheckOwner(Player users[], Street street) 
+std::string Street::CheckOwner(std::vector<Player> users, Street street)
 {
 	for (int i = 0; i < Player::playersNum; i++) {
 		for (int j = 0; j < users[i].ownStreet.size(); j++) {
@@ -276,30 +282,6 @@ std::string Street::CheckOwner(Player users[], Street street)
 }
 
 //МЕТОДЫ КЛАССА TREASURY
-std::string Treasury::GetAction()
-{
-	return this->action;
-}
-void Treasury::SetAction(std::string action)
-{
-	this->action = action;
-}
-int Treasury::GetCellToMove()
-{
-	return this->cellToMove;
-}
-void Treasury::SetCellToMove(int cellToMove)
-{
-	this->cellToMove = cellToMove;
-}
-int Treasury::GetAddedCash()
-{
-	return this->addedCash;
-}
-void Treasury::SetAddedCash(int addedCash)
-{
-	this->addedCash = addedCash;
-}
 
 
 //МЕТОДЫ КЛАССА SubStreet
@@ -312,7 +294,7 @@ SubStreet::SubStreet()
 	this->cost = 100;
 }
 
-std::string SubStreet::CheckOwner(Player users[], SubStreet subStreet)
+std::string SubStreet::CheckOwner(std::vector<Player> users, SubStreet subStreet)
 {
 	for (int i = 0; i < Player::playersNum; i++) {
 		for (int j = 0; j < users[i].ownSubStreet.size(); j++) {
@@ -422,12 +404,6 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 			System::Threading::Thread::Sleep(sleepTime); //остановка программы
 			dice = dice1_roll + dice2_roll; //установка результатов броска
 		}
-
-		/*sers[1].SetOwnStreet(streets[0]);
-		streets[0].owner = users[1].userName;
-
-		users[2].SetOwnStreet(streets[17]);
-		streets[17].owner = users[2].userName;*/
 
 		bool checkStart;
 
@@ -671,10 +647,6 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 			}
 		}
 
-
-
-
-
 		if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "start")
 		{
 			moveOn->Visible = true;
@@ -699,6 +671,9 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 			cash->Text = gcnew System::String(buffString.c_str());
 			buffString = std::to_string(users[curPlayerIndex].GetCash() + users[curPlayerIndex].GetStreetMoney()) + "$";
 			AllMoney->Text = gcnew System::String(buffString.c_str());
+			for (int i = 0; i < users.size(); i++)
+				if (users[i].userName == streets[streetIndex].CheckOwner(users, streets[streetIndex]))
+					users[i].SetCash(streets[streetIndex].rent[streets[streetIndex].housesCount]);
 			textBox1->Text = "\r\n" + "Рента оплачена успешно";
 		}
 		else
@@ -807,7 +782,12 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 		if (treasury[randomTreasury].GetAddedCash() > 0)
 		{
 			if (randomTreasury == 13)
+			{
 				users[curPlayerIndex].SetCash(10 * Player::playersNum);
+				for (int i = 0; i < users.size(); i++)
+					if (i != curPlayerIndex)
+						users[i].SetCash(-10);
+			}
 			else
 				users[curPlayerIndex].SetCash(treasury[randomTreasury].GetAddedCash());
 			
@@ -900,6 +880,8 @@ System::Void GameForm::toPerform_Click(System::Object^ sender, System::EventArgs
 		else
 			users[curPlayerIndex].PlayersMoving(Player3, 20, board, Player1, Player2, Player3);
 	}
+
+	users[curPlayerIndex].PlayersInfo(users, playersInfo);
 }
 
 System::Void GameForm::toPerform_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
@@ -942,6 +924,13 @@ System::Void GameForm::rollDice_MouseLeave(System::Object^ sender, System::Event
 
 System::Void GameForm::GameForm_Load(System::Object^ sender, System::EventArgs^ e) //функция, срабатывающуя при загрузке формы
 {
+	if (Player::playersNum > 0)
+		users.push_back(user1);
+	if (Player::playersNum > 1)
+		users.push_back(user2);
+	if (Player::playersNum > 2)
+		users.push_back(user3);
+
 	setlocale(LC_ALL, "Russian");
 
 	UserName->Text = gcnew System::String(users[curPlayerIndex].userName.c_str()); //установка имени пользователя из класса
@@ -1253,6 +1242,7 @@ System::Void GameForm::moveOn_Click(System::Object^ sender, System::EventArgs^ e
 	moveOn->Visible = false;
 	moveOn->Enabled = false;
 	buy->Enabled = false;
+	buy->Visible = false;
 	roll->Visible = false;
 	useCard->Visible = false;
 	ok->Visible = true;

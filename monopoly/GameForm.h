@@ -6,6 +6,8 @@
 #include <fstream>
 #include <locale.h>
 
+
+
 namespace monopoly {
 
 	using namespace System;
@@ -1471,7 +1473,7 @@ public:
 	std::string name;
 	std::string definition;
 	std::string action;
-	int OnCell(Player users[]);
+	int OnCell(std::vector<Player> users);
 
 	void MoveOnCell(System::Windows::Forms::PictureBox^ player1, System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3);
 };
@@ -1486,7 +1488,7 @@ public:
 	int buildCost;
 	int cost;
 	int housesCount;
-	std::string CheckOwner(Player users[], Street street);
+	std::string CheckOwner(std::vector<Player> users, Street street);
 };
 
 class Player {
@@ -1519,7 +1521,7 @@ public:
 	void SetArrested(bool arrested);
 
 	bool PlayersMoving(System::Windows::Forms::PictureBox^ player, int dice, Cell board[], System::Windows::Forms::PictureBox^ player1, System::Windows::Forms::PictureBox^ player2, System::Windows::Forms::PictureBox^ player3);
-	void PlayersInfo(Player users[], System::Windows::Forms::TextBox^ textBox);
+	void PlayersInfo(std::vector<Player> users, System::Windows::Forms::TextBox^ textBox);
 
 	bool GetPrisonCard();
 	void SetPrisonCard(bool arrested);
@@ -1548,7 +1550,7 @@ public:
 	int rent[2];
 	std::string owner;
 	int cost;
-	std::string CheckOwner(Player users[], SubStreet street);
+	std::string CheckOwner(std::vector<Player> users, SubStreet street);
 };
 
 class Chance
@@ -1567,20 +1569,11 @@ public:
 	void SetAddedCash(int addedCash);
 };
 
-class Treasury
+class Treasury : public Chance
 {
-	std::string action;
-	int cellToMove;
-	int addedCash;
-public:
-	std::string GetAction();
-	void SetAction(std::string action);
-
-	int GetCellToMove();
-	void SetCellToMove(int cellToMove);
-
-	int GetAddedCash();
-	void SetAddedCash(int addedCash);
 };
 
-extern Player* users;
+//extern std::vector<Player> users;
+extern Player user1;
+extern Player user2;
+extern Player user3;
