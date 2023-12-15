@@ -10,7 +10,7 @@ Player::Player() //конструктор класса Player, который устанавливает начальные зн
 {
 	userName = "User";
 	this->currentPos = 40;
-	cash = 1500;
+	cash = 2;
 	streetMoney = 0;
 	arrested = false;
 	prisonCard = false;
@@ -194,6 +194,19 @@ void Player::SetPrisonCard(bool arrested)
 {
 	this->prisonCard = arrested;
 }
+bool Player::SellStreet(std::string streetForSell)
+{
+	for (int i = 0; i < this->ownStreet.size(); ++i)
+	{
+		if (this->ownStreet[i].streetName == streetForSell)
+		{
+			ownStreet.erase(this->ownStreet.begin() + i);
+			--i;
+			return true;
+		}
+	}
+	return false;
+}
 
 //МЕТОДЫ КЛАССА CELL
 int Cell::OnCell(std::vector<Player> users) //возвращает кол-во игроков на определённой ячейке
@@ -280,9 +293,6 @@ std::string Street::CheckOwner(std::vector<Player> users, Street street)
 	}
 	return "monopoly";
 }
-
-//МЕТОДЫ КЛАССА TREASURY
-
 
 //МЕТОДЫ КЛАССА SubStreet
 
@@ -408,9 +418,9 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 		bool checkStart;
 
 		if(curPlayerIndex == 0)
-			checkStart = users[curPlayerIndex].PlayersMoving(Player1, dice, board, Player1, Player2, Player3);
+			checkStart = users[curPlayerIndex].PlayersMoving(Player1, 9, board, Player1, Player2, Player3);
 		if(curPlayerIndex == 1)
-			checkStart = users[curPlayerIndex].PlayersMoving(Player2, dice, board, Player1, Player2, Player3);
+			checkStart = users[curPlayerIndex].PlayersMoving(Player2, 9, board, Player1, Player2, Player3);
 		if (curPlayerIndex == 2)
 			checkStart = users[curPlayerIndex].PlayersMoving(Player3, dice, board, Player1, Player2, Player3);
 
@@ -463,6 +473,7 @@ System::Void GameForm::rollDice_Click(System::Object^ sender, System::EventArgs^
 					textBox1->Text += "\r\n" + "Вам придётся заплатить: " + msclr::interop::marshal_as<System::String^>(buffString);
 					toPerform->Visible = true;
 					moveOn->Visible = true;
+					moveOn->Enabled = false;
 				}
 
 			}
@@ -1119,9 +1130,9 @@ System::Void GameForm::buy_Click(System::Object^ sender, System::EventArgs^ e)
 {
 	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "street")
 	{
-		streets[streetIndex].owner = users[curPlayerIndex].userName;
 		if (users[curPlayerIndex].GetCash() >= streets[streetIndex].cost)
 		{
+			streets[streetIndex].owner = users[curPlayerIndex].userName;
 			users[curPlayerIndex].SetCash(-streets[streetIndex].cost);
 			users[curPlayerIndex].SetOwnStreet(streets[streetIndex]);
 			users[curPlayerIndex].SetStreetMoney(streets[streetIndex].cost / 2);
@@ -1137,9 +1148,9 @@ System::Void GameForm::buy_Click(System::Object^ sender, System::EventArgs^ e)
 
 	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "electricity")
 	{
-		subStreets[0].owner = users[curPlayerIndex].userName;
 		if (users[curPlayerIndex].GetCash() >= subStreets[0].cost)
 		{
+			subStreets[0].owner = users[curPlayerIndex].userName;
 			users[curPlayerIndex].SetOwnSubStreet(subStreets[0]);
 			users[curPlayerIndex].SetCash(-subStreets[0].cost);
 		}
@@ -1154,9 +1165,9 @@ System::Void GameForm::buy_Click(System::Object^ sender, System::EventArgs^ e)
 
 	if (board[users[curPlayerIndex].GetCurrentPos() - 1].definition == "waterSupply")
 	{
-		subStreets[1].owner = users[0].userName;
 		if (users[curPlayerIndex].GetCash() >= subStreets[1].cost)
 		{
+			subStreets[1].owner = users[curPlayerIndex].userName;
 			users[curPlayerIndex].SetOwnSubStreet(subStreets[1]);
 			users[curPlayerIndex].SetCash(-subStreets[1].cost);
 		}
@@ -1234,6 +1245,7 @@ System::Void GameForm::buy_MouseLeave(System::Object^ sender, System::EventArgs^
 
 System::Void GameForm::moveOn_Click(System::Object^ sender, System::EventArgs^ e)
 {
+	textBox1->ForeColor = System::Drawing::Color::FromArgb(97, 97, 96);
 	curPlayerIndex++;
 	if (curPlayerIndex > Player::playersNum - 1)
 		curPlayerIndex = 0;

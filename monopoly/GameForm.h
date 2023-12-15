@@ -1499,17 +1499,18 @@ private:
 	int streetMoney;
 	bool prisonCard;
 public:
-	Player();
+	static int playersNum;
 	std::vector<Street> ownStreet;
-	void SetOwnStreet(Street street);
 	std::vector<SubStreet> ownSubStreet;
+	std::string userName;
+
+	Player();
+
+	void SetOwnStreet(Street street);
 	void SetOwnSubStreet(SubStreet subStreet);
 
 	int GetStreetMoney();
 	void SetStreetMoney(int streetMoney);
-
-	std::string userName;
-	static int playersNum;
 
 	int GetCurrentPos();
 	void SetCurrentPos(int curPos);
@@ -1526,20 +1527,7 @@ public:
 	bool GetPrisonCard();
 	void SetPrisonCard(bool arrested);
 
-	bool SellStreet(std::string streetForSell)
-	{
-		for (int i = 0; i < this->ownStreet.size(); ++i)
-		{
-			if (this->ownStreet[i].streetName == streetForSell)
-			{
-				ownStreet.erase(this->ownStreet.begin() + i);
-				--i;
-				return true;
-			}
-		}
-		return false;
-	}
-
+	bool SellStreet(std::string streetForSell);
 };
 
 class SubStreet

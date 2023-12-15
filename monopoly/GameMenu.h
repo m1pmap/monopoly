@@ -210,7 +210,7 @@ namespace monopoly {
 			this->characters->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"characters.Image")));
 			this->characters->Location = System::Drawing::Point(150, 152);
 			this->characters->Name = L"characters";
-			this->characters->Size = System::Drawing::Size(1696, 775);
+			this->characters->Size = System::Drawing::Size(1696, 845);
 			this->characters->TabIndex = 6;
 			this->characters->TabStop = false;
 			this->characters->Visible = false;
